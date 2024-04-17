@@ -1,15 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>API Documentation</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Documentation page test</h1>
+    <h1>API Documentation</h1>
+
+    <h2>Movies</h2>
+    <table>
+        <tr>
+            <th>Description</th>
+            <th>URL</th>
+            <th>Method</th>
+            <th>Query Parameters</th>
+            <th>Request Body</th>
+            <th>Response Data</th>
+        </tr>
+        <tr>
+            <td>Return a list of all movies</td>
+            <td>/movies</td>
+            <td>GET</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>List of all movies</td>
+        </tr>
+        <tr>
+            <td>Return data about a single movie by title</td>
+            <td>/movies/:title</td>
+            <td>GET</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>Data about a single movie</td>
+        </tr>
+        <tr>
+            <td>Return data about a genre by name/title</td>
+            <td>/genres/:name</td>
+            <td>GET</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>Data about a genre</td>
+        </tr>
+        <tr>
+            <td>Return data about a director by name</td>
+            <td>/director/:name</td>
+            <td>GET</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>Data about a director</td>
+        </tr>
+    </table>
+
+    <h2>Users</h2>
+    <table>
+        <tr>
+            <th>Description</th>
+            <th>URL</th>
+            <th>Method</th>
+            <th>Query Parameters</th>
+            <th>Request Body</th>
+            <th>Response Data</th>
+        </tr>
+        <tr>
+            <td>Allow new users to register</td>
+            <td>/users</td>
+            <td>POST</td>
+            <td>N/A</td>
+            <td>User details (e.g., username, email)</td>
+            <td>Newly registered user details</td>
+        </tr>
+        <tr>
+            <td>Allow users to update their user info (username)</td>
+            <td>/users/:userId</td>
+            <td>PUT</td>
+            <td>N/A</td>
+            <td>User info (e.g., updated username)</td>
+            <td>Updated user details</td>
+        </tr>
+        <tr>
+            <td>Allow users to add a movie to their list of favorites</td>
+            <td>/users/:userId/favorites</td>
+            <td>POST</td>
+            <td>N/A</td>
+            <td>Movie ID</td>
+            <td>Confirmation message</td>
+        </tr>
+        <tr>
+            <td>Allow users to remove a movie from their list of favorites</td>
+            <td>/users/:userId/favorites/:movieId</td>
+            <td>DELETE</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>Confirmation message</td>
+        </tr>
+        <tr>
+            <td>Allow existing users to deregister</td>
+            <td>/users/:userId</td>
+            <td>DELETE</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>Confirmation message</td>
+        </tr>
+    </table>
+
 </body>
 
 </html>
