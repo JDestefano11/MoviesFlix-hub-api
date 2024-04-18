@@ -118,14 +118,16 @@ app.post('/users', (req, res) => {
 
     const newUser = req.body;
 
+
     // Check if the user's fullname is provided
-    if (newUser.fullname) {
+    if (newUser.fullname && newUser.email && newUser.username) {
         newUser.id = uuid.v4();
         users.push(newUser);
-
+        console.log('New User Registered:', newUser);
         res.status(201).json(newUser);
     } else {
-        res.status(400).send('New user needs a name');
+        console.log('Registration Failed: Missing Fields');
+        res.status(400).send('New user information is incomplete');
     }
 });
 
