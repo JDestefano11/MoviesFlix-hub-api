@@ -91,6 +91,17 @@ app.get('/genres/:name', (req, res) => {
 
 // GET: Read director by name
 app.get('/directors/:name', (req, res) => {
+
+    // Sample data for testing
+    const directors = [
+        {
+            name: "Christopher Nolan",
+            birthYear: 1970,
+            nationality: "British",
+            famousMovies: ["Inception", "The Dark Knight", "Interstellar"]
+        }
+    ]
+
     const name = req.params.name;
     const director = directors.find(director => director.name === name);
 
