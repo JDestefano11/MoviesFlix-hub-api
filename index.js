@@ -7,8 +7,14 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
 
+
 // Initialize users array
-const users = [];
+const users = [
+    {
+        id: '1',
+        favorites: []
+    }
+];
 
 // Middleware to log all requests
 app.use(morgan('common'));
@@ -72,12 +78,6 @@ app.get('/movies/:title', (req, res) => {
 // GET: Read genre by name
 app.get('/genres/:name', (req, res) => {
 
-    // Sample data for testing
-    const genres = [
-        { name: 'Action', description: 'Action genre description' },
-        { name: 'Drama', description: 'Drama genre description' },
-    ];
-
     const name = req.params.name;
     const genre = genres.find(genre => genre.name === name);
 
@@ -92,16 +92,6 @@ app.get('/genres/:name', (req, res) => {
 
 // GET: Read director by name
 app.get('/directors/:name', (req, res) => {
-
-    // Sample data for testing
-    const directors = [
-        {
-            name: "Christopher Nolan",
-            birthYear: 1970,
-            nationality: "British",
-            famousMovies: ["Inception", "The Dark Knight", "Interstellar"]
-        }
-    ];
 
     const name = req.params.name;
     const director = directors.find(director => director.name === name);
