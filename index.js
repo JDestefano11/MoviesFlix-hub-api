@@ -49,7 +49,15 @@ app.get('/movies', (req, res) => {
 });
 
 // GET: Read a movie by title
+
 app.get('/movies/:title', (req, res) => {
+
+    // Sample data for testing
+    const testData = {
+        "title": "Avengers"
+    };
+
+
     const title = req.params.title;
     const movie = movies.find(movie => movie.title === title);
 
@@ -83,13 +91,6 @@ app.get('/genres/:name', (req, res) => {
 
 // GET: Read director by name
 app.get('/directors/:name', (req, res) => {
-
-    const directors = [
-        { name: 'John Doe', bio: 'Director\'s bio' },
-        { name: 'Jane Smith', bio: 'Another director\'s bio' },
-    ];
-
-
     const name = req.params.name;
     const director = directors.find(director => director.name === name);
 
@@ -152,13 +153,6 @@ app.put('/users/:userId', (req, res) => {
 
 // POST: Allow a User to Add a Movie to Their Favorites 
 app.post('/users/:userId/favorites', (req, res) => {
-
-    // Sample data for testing 
-    const sampleData = {
-        "movieId": "123456789"
-    };
-
-
     const userId = req.params.userId;
     const movieId = req.body.movieId;
 
@@ -188,14 +182,6 @@ app.post('/users/:userId/favorites', (req, res) => {
 
 // DELETE: Allow Users to Remove a Movie from Their Favorites
 app.delete('/users/:userId/favorites/:movieId', (req, res) => {
-
-    // Sample data for testing
-    const sampleData = {
-        "userId": "user123",
-        "movieId": "movie456"
-    };
-
-
     const userId = req.params.userId;
     const movieId = req.params.movieId;
 
@@ -221,13 +207,6 @@ app.delete('/users/:userId/favorites/:movieId', (req, res) => {
 
 // Delete a user
 app.delete('/users/:id/', (req, res) => {
-
-    // Sample data for testing
-    const sampleData = {
-        "id": "user123"
-    };
-
-
     // Extract the user ID from the request parameters
     const { id } = req.params;
 
