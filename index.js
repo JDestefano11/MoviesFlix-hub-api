@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/movies', (req, res) => {
 
     const topMovies = [
-        { title: 'Movie 1', year: 2022 },
+        { title: 'Avengers', year: 2022 },
         { title: 'Movie 2', year: 2020 },
         { title: 'Movie 3', year: 2021 },
         { title: 'Movie 4', year: 2018 },
