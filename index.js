@@ -2,6 +2,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const morgan = require('morgan')
 const path = require('path')
+const uuid = require('uuid')
 
 const app = express()
 const port = 3000
@@ -100,10 +101,10 @@ app.get('/directors/:name', (req, res) => {
             nationality: "British",
             famousMovies: ["Inception", "The Dark Knight", "Interstellar"]
         }
-    ]
+    ];
 
     const name = req.params.name;
-    const director = director.find(director => directors.name === name);
+    const director = directors.find(director => director.name === name);
 
     if (!director) {
         return res.status(404).send('Director not found');
