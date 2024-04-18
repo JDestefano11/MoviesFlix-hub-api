@@ -1,11 +1,14 @@
-const bodyParser = require('body-parser')
 const express = require('express')
 const morgan = require('morgan')
 const path = require('path')
 const uuid = require('uuid')
+const bodyParser = require('body-parser')
 
 const app = express()
 const port = 3000
+
+// Allow bodyParser to be used
+app.use(bodyParser.json());
 
 // Middleware to log all requests
 app.use(morgan('common'));
