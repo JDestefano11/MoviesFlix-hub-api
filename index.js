@@ -6,8 +6,6 @@ const path = require('path')
 const app = express()
 const port = 3000
 
-
-
 // Middleware to log all requests
 app.use(morgan('common'));
 
@@ -64,6 +62,13 @@ app.get('/movies/:title', (req, res) => {
 
 // GET: Read genre by name
 app.get('/genres/:name', (req, res) => {
+
+    // Sample data for testing
+    const genres = [
+        { name: 'Action', description: 'Action genre description' },
+        { name: 'Drama', description: 'Drama genre description' },
+    ];
+
     const name = req.params.name;
     const genre = genres.find(genre => genre.name === name);
 
@@ -74,8 +79,17 @@ app.get('/genres/:name', (req, res) => {
     res.status(200).json(genre);
 });
 
+
+
 // GET: Read director by name
 app.get('/directors/:name', (req, res) => {
+
+    const directors = [
+        { name: 'John Doe', bio: 'Director\'s bio' },
+        { name: 'Jane Smith', bio: 'Another director\'s bio' },
+    ];
+
+
     const name = req.params.name;
     const director = directors.find(director => director.name === name);
 
@@ -88,6 +102,13 @@ app.get('/directors/:name', (req, res) => {
 
 // POST: Allow New Users to Register
 app.post('/users', (req, res) => {
+
+    // Sample data for testing 
+    const userRegister = {
+        "fullname": "Alice Smith",
+        "email": "alice@example.com",
+        "username": "alice123"
+    };
     const newUser = req.body;
 
     // Check if the user's fullname is provided
@@ -103,6 +124,12 @@ app.post('/users', (req, res) => {
 
 // PUT: Allow Users to Update Their Username
 app.put('/users/:userId', (req, res) => {
+
+    // Sample data for testing 
+    const sampleData = {
+        "username": "newusername123"
+    };
+
     const userId = req.params.userId;
     const updatedInfo = req.body;
 
@@ -125,6 +152,13 @@ app.put('/users/:userId', (req, res) => {
 
 // POST: Allow a User to Add a Movie to Their Favorites 
 app.post('/users/:userId/favorites', (req, res) => {
+
+    // Sample data for testing 
+    const sampleData = {
+        "movieId": "123456789"
+    };
+
+
     const userId = req.params.userId;
     const movieId = req.body.movieId;
 
@@ -154,6 +188,14 @@ app.post('/users/:userId/favorites', (req, res) => {
 
 // DELETE: Allow Users to Remove a Movie from Their Favorites
 app.delete('/users/:userId/favorites/:movieId', (req, res) => {
+
+    // Sample data for testing
+    const sampleData = {
+        "userId": "user123",
+        "movieId": "movie456"
+    };
+
+
     const userId = req.params.userId;
     const movieId = req.params.movieId;
 
@@ -179,6 +221,13 @@ app.delete('/users/:userId/favorites/:movieId', (req, res) => {
 
 // Delete a user
 app.delete('/users/:id/', (req, res) => {
+
+    // Sample data for testing
+    const sampleData = {
+        "id": "user123"
+    };
+
+
     // Extract the user ID from the request parameters
     const { id } = req.params;
 
