@@ -7,14 +7,17 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
 
-// Allow bodyParser to be used
-app.use(bodyParser.json());
+// Initialize users array
+const users = [];
 
 // Middleware to log all requests
 app.use(morgan('common'));
 
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Allow bodyParser to be used
+app.use(bodyParser.json());
 
 // Get route for /movies
 app.get('/movies', (req, res) => {
@@ -55,12 +58,6 @@ app.get('/movies', (req, res) => {
 // GET: Read a movie by title
 
 app.get('/movies/:title', (req, res) => {
-
-    // Sample data for testing
-    const testData = {
-        "title": "Avengers"
-    };
-
 
     const title = req.params.title;
     const movie = movies.find(movie => movie.title === title);
@@ -119,12 +116,6 @@ app.get('/directors/:name', (req, res) => {
 // POST: Allow New Users to Register
 app.post('/users', (req, res) => {
 
-    // Sample data for testing 
-    const userRegister = {
-        "fullname": "Alice Smith",
-        "email": "alice@example.com",
-        "username": "alice123"
-    };
     const newUser = req.body;
 
     // Check if the user's fullname is provided
@@ -140,11 +131,6 @@ app.post('/users', (req, res) => {
 
 // PUT: Allow Users to Update Their Username
 app.put('/users/:userId', (req, res) => {
-
-    // Sample data for testing 
-    const sampleData = {
-        "username": "newusername123"
-    };
 
     const userId = req.params.userId;
     const updatedInfo = req.body;
