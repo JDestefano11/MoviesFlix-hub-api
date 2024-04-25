@@ -1,12 +1,12 @@
 const express = require('express')
-const morgan = require('morgan')
 const path = require('path')
-const uuid = require('uuid')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 const Models = require('./models.js');
-const Movie = Models.Movie;
-const User = Models.User;
+
+
+const Movies = Models.Movie;
+const Users = Models.User;
 
 mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -14,36 +14,14 @@ mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, 
 // Import exported entities from model.js
 const { Movie, User } = require('./model.js');
 
-// Your code here
-
-
 const app = express()
 const port = 3000
-
-
-// Initialize users array
-const users = [
-    {
-        id: '1',
-        favorites: []
-    }
-];
-
-// Middleware to log all requests
-app.use(morgan('common'));
 
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Allow bodyParser to be used
 app.use(bodyParser.json());
-
-
-// Middleware for catching errors
-app.use(function (err, req, res, next) {
-    console.error(err.stack)
-    res.status(500).send('Something broke!')
-});
 
 // GET: Read list of movies
 app.get('/movies', async (req, res) => {
