@@ -30,7 +30,5 @@ const User = mongoose.model('User', userSchema);
 
 
 // Export modules & schemas
-module.exports = {
-    Movie: Movie,
-    User: User
-};
+module.exports.Movie = Movie;
+module.exports.User = User;

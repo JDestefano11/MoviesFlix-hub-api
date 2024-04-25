@@ -1,9 +1,21 @@
 const express = require('express')
-const mongoose = require('mongoose')
 const morgan = require('morgan')
 const path = require('path')
 const uuid = require('uuid')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+const Movie = Models.Movie;
+const User = Models.User;
+
+mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
+
+
+// Import exported entities from model.js
+const { Movie, User } = require('./model.js');
+
+// Your code here
+
 
 const app = express()
 const port = 3000
