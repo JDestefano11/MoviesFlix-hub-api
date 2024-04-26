@@ -4,15 +4,11 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 
-
-const Movies = Models.Movie;
-const Users = Models.User;
-
 mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 // Import exported entities from model.js
-const { Movie, User } = require('./model.js');
+const { Movie, User } = require('./models.js');
 
 const app = express()
 const port = 3000
@@ -50,37 +46,40 @@ app.get('/movies/:title', async (req, res) => {
 });
 
 // GET: Read genre by name
-app.get('/genres/:name', async (req, res) => {
+app.get('/genres/:name', (req, res) => {
     const name = req.params.name;
-    const genre = await genre.findOne({ Name: name })
-        .then((genre) => {
+    Movie.findOne({ 'Genre.Name': name })
+        .then(genre => {
             if (!genre) {
                 return res.status(404).send({ error: 'Genre is not found' });
+            } else {
+                res.status(200).json(genre.Genre);
             }
-            res.status(200).json(genre);
         })
-        .catch((error) => {
+        .catch(error => {
             console.error('Error fetching genre:', error);
             res.status(500).send('Error fetching genre');
         });
 });
 
+
 // GET: Read director by name
 app.get('/directors/:name', async (req, res) => {
 
     const name = req.params.name;
-    const director = await director.findOne({ Name: name })
-        .then((director) => {
+    Movie.findOne({ 'Director.Name': name })
+        .then(director => {
             if (!director) {
-                res.status(404).send({ Error: 'Director not found' });
+                res.status(404).send({ error: 'Director not found' });
+            } else {
+                res.status(200).json(director.Director);
             }
         })
-        .catch((error) => {
-            console.error('Error fetching the director', error);
-            res.status(500).send('Error fetching the director');
+        .catch(error => {
+            console.error('Error fetching director:', error);
+            res.status(500).send('Error fetching director');
         });
 });
-
 // POST: Allow New Users to Register
 app.post('/users', (req, res) => {
     const newUser = req.body;
