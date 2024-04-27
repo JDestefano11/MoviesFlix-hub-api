@@ -137,7 +137,7 @@ app.delete('/users/:userId/favorites/:movieId', async (req, res) => {
     const movieId = req.params.movieId;
 
     // Check is the Id of the user exists 
-    User.findbyId(userId)
+    User.findById(userId)
         .then(user => {
             if (!user) {
                 res.status(404).send('User does not exist');

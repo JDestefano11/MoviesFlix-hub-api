@@ -33,3 +33,7 @@ const User = mongoose.model('User', userSchema);
 // Export modules & schemas
 module.exports.Movie = Movie;
 module.exports.User = User;
+
+
+
+
