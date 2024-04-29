@@ -16,8 +16,11 @@ const port = 3000
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Allow bodyParser to be used
-app.use(bodyParser.json());
+// Middleware to parse incoming request bodies
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+
 
 // GET: Read list of movies
 app.get('/movies', async (req, res) => {
