@@ -1,8 +1,12 @@
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
-const mongoose = require('mongoose');
-const Models = require('./models.js');
+const mongoose = require('mongoose')
+const Models = require('./models.js')
+const auth = require('./auth')(app)
+const passport = require('passport');
+require('./passport');
+
 
 mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -18,7 +22,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware to parse incoming request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
-
 
 
 
@@ -189,51 +192,6 @@ app.delete('/users/:id/', (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
+module.exports = app;
