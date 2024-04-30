@@ -1,4 +1,4 @@
-const jwtSecret = 'Secret-Movie';
+const jwtSecret = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
 
 const jwt = require('jsonwebtoken'),
     passport = require('passport');
