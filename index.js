@@ -37,7 +37,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
 });
 
 // GET: Read a movie by title
-app.get('/movies/:title', async (req, res) => {
+app.get('/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const title = req.params.title;
     try {
         const movie = await Movie.findOne({ Title: title });
@@ -52,7 +52,7 @@ app.get('/movies/:title', async (req, res) => {
 });
 
 // GET: Read genre by name
-app.get('/genres/:name', (req, res) => {
+app.get('/genres/:name', passport.authenticate('jwt', { session: false }), (req, res) => {
     const name = req.params.name;
     Movie.findOne({ 'Genre.Name': name })
         .then(genre => {
@@ -70,7 +70,7 @@ app.get('/genres/:name', (req, res) => {
 
 
 // GET: Read director by name
-app.get('/directors/:name', async (req, res) => {
+app.get('/directors/:name', passport.authenticate('jwt', { session: false }), async (req, res) => {
 
     const name = req.params.name;
     Movie.findOne({ 'Director.Name': name })
@@ -87,7 +87,7 @@ app.get('/directors/:name', async (req, res) => {
         });
 });
 // POST: Allow New Users to Register
-app.post('/users', (req, res) => {
+app.post('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
     const newUser = req.body;
 
     // Check if required fields are present
@@ -117,7 +117,7 @@ app.post('/users', (req, res) => {
 });
 
 // PUT: Allow Users to Update Their Username
-app.put('/users/:userId', async (req, res) => {
+app.put('/users/:userId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
         const userId = req.params.userId;
         const updatedInfo = req.body;
@@ -138,7 +138,7 @@ app.put('/users/:userId', async (req, res) => {
 });
 
 // DELETE: Allows users to remove a movie from their favorites
-app.delete('/users/:userId/favorites/:movieId', async (req, res) => {
+app.delete('/users/:userId/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const userId = req.params.userId;
     const movieId = req.params.movieId;
 
@@ -169,7 +169,7 @@ app.delete('/users/:userId/favorites/:movieId', async (req, res) => {
 });
 
 // Delete a user
-app.delete('/users/:id/', (req, res) => {
+app.delete('/users/:id/', passport.authenticate('jwt', { session: false }), (req, res) => {
     const { id } = req.params;
 
     // Find the user by ID and delete
