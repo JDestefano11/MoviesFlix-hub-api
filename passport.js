@@ -52,3 +52,4 @@ passport.use(new JWTStrategy({
         return callback(error);
     }
 }));
+module.exports = passport;
