@@ -3,8 +3,9 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const Models = require('./models.js')
-
-
+const passport = require('passport');
+require('./passport');
+const authRoutes = require('./auth');
 
 mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -17,13 +18,11 @@ const port = 3000
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware to parse incoming request bodies
 app.use(bodyParser.json());
 
-const authRoutes = require('./auth');
-app.use('./auth', authRoutes);
-const passport = require('passport');
-require('./passport');
+app.use(passport.initialize()); // Initialize Passport middleware
+
+app.use('/auth', authRoutes); // Use the auth router for authentication routes
 
 // GET: Read list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
