@@ -87,7 +87,7 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
         });
 });
 // POST: Allow New Users to Register
-app.post('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.post('/users', (req, res) => {
     const newUser = req.body;
 
     // Check if required fields are present
