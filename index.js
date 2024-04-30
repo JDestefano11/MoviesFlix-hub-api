@@ -3,9 +3,7 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const Models = require('./models.js')
-const auth = require('./auth')(app)
-const passport = require('passport');
-require('./passport');
+
 
 
 mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -13,7 +11,6 @@ mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, 
 
 // Import exported entities from model.js
 const { Movie, User } = require('./models.js');
-
 const app = express()
 const port = 3000
 
@@ -23,10 +20,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Middleware to parse incoming request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
+const auth = require('./auth')(app)
+const passport = require('passport');
+require('./passport');
 
 // GET: Read list of movies
-app.get('/movies', async (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
         const movies = await Movie.find();
         res.status(200).json(movies);
