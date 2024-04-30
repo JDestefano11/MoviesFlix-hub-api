@@ -40,7 +40,7 @@ passport.use(
 // Configure Passport to use JWT authentication strategy
 passport.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-    secretOrKey: 'your_jwt_secret$'
+    secretOrKey: 'Secret-Movie'
 }, async (jwtPayload, callback) => {
     try {
         // Find the user associated with the ID extracted from the JWT payload
