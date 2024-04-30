@@ -18,12 +18,12 @@ const port = 3000
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware to parse incoming request bodies
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-const authRoutes = require('/auth');
-app.use('/auth', authRoutes);
+const authRoutes = require('./auth');
+app.use('./auth', authRoutes);
 const passport = require('passport');
-require('/passport');
+require('./passport');
 
 // GET: Read list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
