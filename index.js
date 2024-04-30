@@ -20,7 +20,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Middleware to parse incoming request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const auth = require('./auth')(app)
+const authRoutes = require('./auth.js');
+app.use('/auth', authRoutes);
 const passport = require('passport');
 require('./passport');
 
