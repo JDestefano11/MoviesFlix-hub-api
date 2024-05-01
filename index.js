@@ -2,7 +2,6 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-const Models = require('./models.js')
 const passport = require('passport');
 require('./passport');
 const authRoutes = require('./auth');

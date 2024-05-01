@@ -20,6 +20,7 @@ const movieSchema = mongoose.Schema({
 const userSchema = mongoose.Schema({
     Username: { type: String, required: true },
     Name: String,
+    Password: { type: String, required: true },
     Birthday: Date,
     FavoriteMovies: [String]
 });
