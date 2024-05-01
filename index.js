@@ -1,29 +1,31 @@
-const express = require('express')
-const path = require('path')
-const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const passport = require('passport');
 const authRoutes = require('./auth');
 
+const { Movie, User } = require('./models.js');
+
 mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
-
-// Import exported entities from model.js
-const { Movie, User } = require('./models.js');
-const app = express()
-const port = 3000
+const app = express();
+const port = 3000;
 
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(passport.initialize()); // Initialize Passport middleware
 
-app.use('/auth', authRoutes); // Use the auth router for authentication routes
-
 // Passport configuration
 require('./passport');
+
+app.use('/auth', authRoutes); // Use the auth router for authentication routes
+
+
 
 // GET: Read list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -194,4 +196,3 @@ app.delete('/users/:id/', passport.authenticate('jwt', { session: false }), (req
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
-module.exports = app;
