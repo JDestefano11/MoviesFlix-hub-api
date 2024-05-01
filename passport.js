@@ -4,7 +4,7 @@ const JWTStrategy = require('passport-jwt').Strategy;
 const bcrypt = require('bcryptjs');
 const { ExtractJwt } = require('passport-jwt');
 const { User } = require('./models.js');
-const jwtSecret = 'your_jwt_secret';
+const jwtSecret = 'ThisIsATemporarySecretKey123';
 
 // Local Strategy for basic HTTP authentication
 passport.use(new LocalStrategy(
