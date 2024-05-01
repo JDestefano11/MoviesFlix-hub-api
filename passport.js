@@ -2,7 +2,6 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const passportJWT = require('passport-jwt');
 const Models = require('./models.js');
-const crypto = require('crypto')
 
 
 
@@ -11,8 +10,6 @@ const User = Models.User;
 const ExtractJWT = passportJWT.ExtractJwt;
 const JWTStrategy = passportJWT.Strategy;
 
-// Generate a random secret key
-const secretKey = crypto.randomBytes(32).toString('hex');
 
 passport.use(
     new LocalStrategy(
@@ -37,7 +34,7 @@ passport.use(
     new JWTStrategy(
         {
             jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-            secretOrKey: secretKey,
+            secretOrKey: 'YourSecretKeyHere',
         },
         async (jwtPayload, callback) => {
             try {

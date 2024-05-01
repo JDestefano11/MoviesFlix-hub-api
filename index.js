@@ -3,7 +3,6 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const passport = require('passport');
-require('./passport');
 const authRoutes = require('./auth');
 
 mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -22,6 +21,9 @@ app.use(bodyParser.json());
 app.use(passport.initialize()); // Initialize Passport middleware
 
 app.use('/auth', authRoutes); // Use the auth router for authentication routes
+
+// Passport configuration
+require('./passport');
 
 // GET: Read list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {

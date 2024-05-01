@@ -1,26 +1,37 @@
-const express = require('express');
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto')
+const jwtSecret = 'YourSecretKeyHere'
 
-const router = express.Router();
+const jwt = require('jsonwebtoken'),
+    passport = require('passport')
 
-// Generate a random secret key
-const secretKey = crypto.randomBytes(32).toString('hex');
+require('./passport'); // Your local passport file
 
-router.post('/login', (req, res, next) => {
+
+
+const generateJWTToken = (user) => {
+    return jwt.sign(user, jwtSecret, {
+        subject: user.Username, // Username encoded in the JWT
+        expiresIn: '7d', // Token expires in 7 days
+        algorithm: 'HS256' // Algorithm used to encode the JWT
+    });
+}
+
+router.post('/login', (req, res,) => {
     passport.authenticate('local', { session: false }, (error, user, info) => {
         if (error || !user) {
-            return res.status(400).json({ message: 'Incorrect username or password' });
+            return res.status(400).json({
+                message: 'Something is not right',
+                user: user
+            });
         }
         req.login(user, { session: false }, (error) => {
             if (error) {
                 return next(error);
             }
-            const token = jwt.sign({ _id: user._id }, secretKey, { expiresIn: '7d' }); // Replace with your JWT secret
+            const token = generateJWTToken({ _id: user._id });
             return res.json({ user, token });
         });
     })(req, res, next);
 });
 
 module.exports = router;
+
