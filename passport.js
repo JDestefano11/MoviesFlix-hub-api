@@ -1,51 +1,45 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const passportJWT = require('passport-jwt');
-const Models = require('./models.js');
+const JWTStrategy = require('passport-jwt').Strategy;
+const bcrypt = require('bcryptjs');
+const { ExtractJwt } = require('passport-jwt');
+const { User } = require('./models.js');
+const jwtSecret = 'your_jwt_secret';
 
-
-
-
-const User = Models.User;
-const ExtractJWT = passportJWT.ExtractJwt;
-const JWTStrategy = passportJWT.Strategy;
-
-
-passport.use(
-    new LocalStrategy(
-        {
-            usernameField: 'Username',
-            passwordField: 'Password',
-        },
-        async (username, password, callback) => {
-            try {
-                const user = await User.findOne({ Username: username });
-                if (!user || !user.validatePassword(password)) {
-                    return callback(null, false, { message: 'Incorrect username or password' });
-                }
-                return callback(null, user);
-            } catch (error) {
-                return callback(error);
+// Local Strategy for basic HTTP authentication
+passport.use(new LocalStrategy(
+    async (username, password, done) => {
+        try {
+            const user = await User.findOne({ Username: username });
+            if (!user) {
+                return done(null, false, { message: 'Incorrect username.' });
             }
-        }
-    )
-);
-passport.use(
-    new JWTStrategy(
-        {
-            jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-            secretOrKey: 'YourSecretKeyHere',
-        },
-        async (jwtPayload, callback) => {
-            try {
-                const user = await User.findById(jwtPayload._id);
-                if (!user) {
-                    return callback(null, false);
-                }
-                return callback(null, user);
-            } catch (error) {
-                return callback(error);
+            const isValid = await bcrypt.compare(password, user.Password);
+            if (!isValid) {
+                return done(null, false, { message: 'Incorrect password.' });
             }
+            return done(null, user);
+        } catch (error) {
+            return done(error);
         }
-    )
-);
+    }
+));
+
+
+// JWT Strategy for token authentication
+passport.use(new JWTStrategy({
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: jwtSecret
+},
+    async (jwtPayload, done) => {
+        try {
+            const user = await User.findById(jwtPayload.id);
+            if (!user) {
+                return done(null, false);
+            }
+            return done(null, user);
+        } catch (error) {
+            return done(error);
+        }
+    }
+));
