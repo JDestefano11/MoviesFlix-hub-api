@@ -2,10 +2,12 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const auth = require('./auth');
 const { Movie, User } = require('./models.js');
+const passport = require('passport');
 
 
+
+require('./passport.js');
 
 mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -18,6 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
+const auth = require('./auth');
 app.use('/auth', auth);
 
 
