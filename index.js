@@ -91,12 +91,9 @@ app.post('/users', async (req, res) => {
         const newUser = req.body;
 
         // Check if required fields are present
-        if (!newUser.username || !newUser.password || !newUser.email) {
-            return res.status(400).send('Username, password, and email are required');
+        if (!newUser.username || !newUser.password) {
+            return res.status(400).send('Username and password are required');
         }
-
-        // Hash the password
-        const hashedPassword = User.hashPassword(newUser.password);
 
         // Check if the username already exists
         const existingUser = await User.findOne({ username: newUser.username });
@@ -104,13 +101,13 @@ app.post('/users', async (req, res) => {
             return res.status(400).send('Username already exists');
         }
 
+        // Hash the password
+        const hashedPassword = User.hashPassword(newUser.password);
+
         // Create the new user
         const user = new User({
             username: newUser.username,
-            password: hashedPassword,
-            email: newUser.email,
-            birthDate: newUser.birthDate,
-            favoriteMovie: newUser.favoriteMovie
+            password: hashedPassword
         });
         await user.save();
 
@@ -120,6 +117,7 @@ app.post('/users', async (req, res) => {
         res.status(500).send('Error registering new user');
     }
 });
+
 
 
 // PUT: Allow Users to Update Their Username
