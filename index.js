@@ -93,6 +93,9 @@ app.post('/users', async (req, res) => {
             return res.status(400).send('Username and password are required');
         }
 
+        // Normalize the username to lowercase
+        const normalizedUsername = newUser.Username.toLowerCase();
+
         // Check if the username already exists
         const existingUser = await User.findOne({ Username: newUser.Username });
         if (existingUser) {
@@ -104,7 +107,7 @@ app.post('/users', async (req, res) => {
 
         // Create the new user with hashed password
         const user = await User.create({
-            Username: newUser.Username,
+            Username: normalizedUsername,
             Password: hashedPassword
         });
 
