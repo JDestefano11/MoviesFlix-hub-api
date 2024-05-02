@@ -86,34 +86,41 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
         });
 });
 // POST: Allow New Users to Register
-app.post('/users', (req, res) => {
-    const newUser = req.body;
+app.post('/users', async (req, res) => {
+    try {
+        const newUser = req.body;
 
-    // Check if required fields are present
-    if (newUser.Username) {
-        User.findOne({ Username: newUser.Username })
-            .then(existingUser => {
-                if (existingUser) {
-                    res.status(400).send('Username already exists');
-                } else {
-                    User.create(newUser)
-                        .then(user => {
-                            res.status(201).json(user);
-                        })
-                        .catch(error => {
-                            console.error('Error registering new user:', error);
-                            res.status(500).send('Error registering new user');
-                        });
-                }
-            })
-            .catch(error => {
-                console.error('Error checking existing user:', error);
-                res.status(500).send('Error checking existing user');
-            });
-    } else {
-        res.status(400).send('Username is required');
+        // Check if required fields are present
+        if (!newUser.username || !newUser.password || !newUser.email) {
+            return res.status(400).send('Username, password, and email are required');
+        }
+
+        // Hash the password
+        const hashedPassword = User.hashPassword(newUser.password);
+
+        // Check if the username already exists
+        const existingUser = await User.findOne({ username: newUser.username });
+        if (existingUser) {
+            return res.status(400).send('Username already exists');
+        }
+
+        // Create the new user
+        const user = new User({
+            username: newUser.username,
+            password: hashedPassword,
+            email: newUser.email,
+            birthDate: newUser.birthDate,
+            favoriteMovie: newUser.favoriteMovie
+        });
+        await user.save();
+
+        res.status(201).json(user);
+    } catch (error) {
+        console.error('Error registering new user:', error);
+        res.status(500).send('Error registering new user');
     }
 });
+
 
 // PUT: Allow Users to Update Their Username
 app.put('/users/:userId', passport.authenticate('jwt', { session: false }), async (req, res) => {
