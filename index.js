@@ -95,6 +95,7 @@ app.post('/users', async (req, res) => {
 
         // Normalize the username to lowercase
         const normalizedUsername = newUser.Username.toLowerCase();
+        const normalizedPassword = newUser.Password.toLowerCase();
 
         // Check if the username already exists
         const existingUser = await User.findOne({ Username: newUser.Username });
@@ -103,7 +104,7 @@ app.post('/users', async (req, res) => {
         }
 
         // Hash the password
-        const hashedPassword = await bcrypt.hash(newUser.Password, 10); // 10 is the salt rounds
+        const hashedPassword = await bcrypt.hash(normalizedPassword, 10); // 10 is the salt rounds
 
         // Create the new user with hashed password
         const user = await User.create({
