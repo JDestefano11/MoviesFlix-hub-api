@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const { Movie, User } = require('./models.js');
 const passport = require('passport');
@@ -14,10 +13,8 @@ mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, 
 const app = express();
 const port = 3000;
 
-// Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(passport.initialize());
 
 const auth = require('./auth');
