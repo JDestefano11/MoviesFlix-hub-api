@@ -6,14 +6,37 @@ const { ExtractJwt } = require('passport-jwt');
 const { User } = require('./models.js');
 const jwtSecret = 'ThisIsATemporarySecretKey123';
 
+
+
+// Middleware to normalize username and password fields
+passport.use((req, next) => {
+    if (req.body.Username && !req.body.username) {
+        req.body.username = req.body.Username;
+    }
+    if (req.body.Password && !req.body.password) {
+        req.body.password = req.body.Password;
+    }
+    next();
+});
+
 // Local Strategy for basic HTTP authentication
-passport.use(new LocalStrategy(
-    async (username, password, done) => {
+passport.use(new LocalStrategy({
+    usernameField: 'username',
+    passwordField: 'password',
+    passReqToCallback: true
+},
+    async (req, username, password, done) => {
         try {
-            const user = await User.findOne({ Username: username });
+            username = username || req.body.Username;
+            password = password || req.body.Password;
+
+            // find username not case-sensitive
+            const user = await User.findOne({ Username: new RegExp('^' + username + '$', 'i') });
             if (!user) {
                 return done(null, false, { message: 'Incorrect username.' });
             }
+
+            // Compare passwords with bcrypt
             const isValid = await bcrypt.compare(password, user.Password);
             if (!isValid) {
                 return done(null, false, { message: 'Incorrect password.' });
