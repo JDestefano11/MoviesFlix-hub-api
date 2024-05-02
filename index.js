@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const { Movie, User } = require('./models.js');
 const passport = require('passport');
-
+const bcrypt = require('bcrypt');
 
 
 require('./passport.js');
@@ -85,31 +85,31 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
             res.status(500).send('Error fetching director');
         });
 });
+
 // POST: Allow New Users to Register
 app.post('/users', async (req, res) => {
     try {
         const newUser = req.body;
 
         // Check if required fields are present
-        if (!newUser.username || !newUser.password) {
+        if (!newUser.Username || !newUser.Password) {
             return res.status(400).send('Username and password are required');
         }
 
         // Check if the username already exists
-        const existingUser = await User.findOne({ username: newUser.username });
+        const existingUser = await User.findOne({ Username: newUser.Username });
         if (existingUser) {
             return res.status(400).send('Username already exists');
         }
 
         // Hash the password
-        const hashedPassword = User.hashPassword(newUser.password);
+        const hashedPassword = await bcrypt.hash(newUser.Password, 10); // 10 is the salt rounds
 
-        // Create the new user
-        const user = new User({
-            username: newUser.username,
-            password: hashedPassword
+        // Create the new user with hashed password
+        const user = await User.create({
+            Username: newUser.Username,
+            Password: hashedPassword
         });
-        await user.save();
 
         res.status(201).json(user);
     } catch (error) {
@@ -117,7 +117,6 @@ app.post('/users', async (req, res) => {
         res.status(500).send('Error registering new user');
     }
 });
-
 
 
 // PUT: Allow Users to Update Their Username
