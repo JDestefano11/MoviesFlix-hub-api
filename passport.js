@@ -7,18 +7,6 @@ const { User } = require('./models.js');
 const jwtSecret = 'ThisIsATemporarySecretKey123';
 
 
-
-// Middleware to normalize username and password fields
-passport.use((req, next) => {
-    if (req.body.Username && !req.body.username) {
-        req.body.username = req.body.Username;
-    }
-    if (req.body.Password && !req.body.password) {
-        req.body.password = req.body.Password;
-    }
-    next();
-});
-
 // Local Strategy for basic HTTP authentication
 passport.use(new LocalStrategy({
     usernameField: 'username',
