@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const { Movie, User } = require('./models.js');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
-
+const cors = require('cors');
 
 require('./passport.js');
 
@@ -16,6 +16,17 @@ const port = 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            let message = 'The CORS policy fot this application doesn\'t allow access from the origin ' + origin;
+            return callback(new Error(message), false);
+        }
+        return callback(null, true);
+    }
+}));
 
 const auth = require('./auth');
 app.use('/auth', auth);
