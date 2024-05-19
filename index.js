@@ -102,8 +102,9 @@ app.post('/users', async (req, res) => {
         check('Password', 'Password is required').not().isEmpty(),
         check('Email', 'Email does not appear to be valid').isEmail()
 
-    // check the validation object for errors
+
     let errors = validationResult(req);
+
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
@@ -151,8 +152,8 @@ app.put('/users/:userId', passport.authenticate('jwt', { session: false }), asyn
         .notEmpty().withMessage('Username is required')
         .isLength({ min: 3, max: 20 }).withMessage('Username must be between 3 and 20 characters');
 
-    // check the validation object for errors
     let errors = validationResult(req);
+
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
@@ -187,7 +188,7 @@ app.delete('/users/:userId/favorites/:movieId', passport.authenticate('jwt', { s
             .trim()
             .isLength({ min: 1 }).withMessage('Movie ID must be at least 1 character long')
 
-    // check the validation object for errors
+
     let errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -229,7 +230,7 @@ app.delete('/users/:id/', passport.authenticate('jwt', { session: false }), (req
     check('id').notEmpty().withMessage('User ID is required'),
         check('id').isMongoId().withMessage('User ID must be a valid MongoDB ID')
 
-    // check the validation object for errors
+
     let errors = validationResult(req);
 
     if (!errors.isEmpty()) {
