@@ -12,7 +12,7 @@ require('./passport.js');
 mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 8080;
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -260,5 +260,7 @@ app.delete('/users/:id/', passport.authenticate('jwt', { session: false }), (req
 
 
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
+app.listen(port, '0.0.0.0', () => {
+    console.log('Listening on Port ' + port);
+});
