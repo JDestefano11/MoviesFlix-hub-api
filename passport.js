@@ -54,8 +54,6 @@ passport.use(new JWTStrategy({
         }
     }
 ));
-
-// Define the local strategy
 passport.use(new LocalStrategy({
     usernameField: 'username',
     passwordField: 'password'
