@@ -5,6 +5,7 @@ const { Movie, User } = require('./models.js');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+const { check, validationResult } = require('express-validator');
 
 require('./passport.js');
 
@@ -96,6 +97,17 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
 
 // POST: Allow New Users to Register
 app.post('/users', async (req, res) => {
+    check('Username', 'Username is required').isLength({ min: 5 }),
+        check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+        check('Password', 'Password is required').not().isEmpty(),
+        check('Email', 'Email does not appear to be valid').isEmail()
+
+    // check the validation object for errors
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+
     try {
         const newUser = req.body;
 
@@ -135,6 +147,16 @@ app.post('/users', async (req, res) => {
 
 // PUT: Allow Users to Update Their Username
 app.put('/users/:userId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    check('Username')
+        .notEmpty().withMessage('Username is required')
+        .isLength({ min: 3, max: 20 }).withMessage('Username must be between 3 and 20 characters');
+
+    // check the validation object for errors
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+
     try {
         const userId = req.params.userId;
         const updatedInfo = req.body;
@@ -153,9 +175,25 @@ app.put('/users/:userId', passport.authenticate('jwt', { session: false }), asyn
         res.status(500).send('Error updating username');
     }
 });
-
 // DELETE: Allows users to remove a movie from their favorites
 app.delete('/users/:userId/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+
+    param('userId').notEmpty().withMessage('User ID is required')
+        .isString().withMessage('User ID must be a string')
+        .trim()
+        .isLength({ min: 1 }).withMessage('User ID must be at least 1 character long'),
+        param('movieId').notEmpty().withMessage('Movie ID is required')
+            .isString().withMessage('Movie ID must be a string')
+            .trim()
+            .isLength({ min: 1 }).withMessage('Movie ID must be at least 1 character long')
+
+    // check the validation object for errors
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+
     const userId = req.params.userId;
     const movieId = req.params.movieId;
 
@@ -187,6 +225,18 @@ app.delete('/users/:userId/favorites/:movieId', passport.authenticate('jwt', { s
 
 // Delete a user
 app.delete('/users/:id/', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+    check('id').notEmpty().withMessage('User ID is required'),
+        check('id').isMongoId().withMessage('User ID must be a valid MongoDB ID')
+
+    // check the validation object for errors
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+
+
     const { id } = req.params;
 
     // Find the user by ID and delete
