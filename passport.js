@@ -54,31 +54,3 @@ passport.use(new JWTStrategy({
         }
     }
 ));
-passport.use(new LocalStrategy({
-    usernameField: 'username',
-    passwordField: 'password'
-}, async (username, password, done) => {
-    try {
-        // Find the user by username
-        const user = await User.findOne({ username: username.toLowerCase() });
-
-        if (!user) {
-            // If the user is not found, return an error message
-            return done(null, false, { message: 'Incorrect username.' });
-        }
-
-        // Compare the provided password with the stored hash
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        if (!isMatch) {
-            // If the password is incorrect, return an error message
-            return done(null, false, { message: 'Incorrect password.' });
-        }
-
-        // If the username and password are correct, return the user
-        return done(null, user);
-    } catch (error) {
-        // If there is an error, return it
-        return done(error);
-    }
-}));
