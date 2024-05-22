@@ -12,9 +12,21 @@ require('./passport.js');
 //mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-mongoose.connect(process.env.CONNECTION_URI, {
+const connectionUri = process.env.CONNECTION_URI;
+
+if (!connectionUri) {
+    console.error("MongoDB connection string is missing!");
+    process.exit(1);
+}
+
+mongoose.connect(connectionUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+}).then(() => {
+    console.log('MongoDB connected...');
+}).catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
 });
 
 const app = express();
@@ -41,10 +53,9 @@ app.use('/auth', auth);
 
 
 // Define a route handler for the root endpoint
-app.get('/home', (req, res) => {
-    res.status(404).send("Oops! Looks like you've reached a page that doesn't exist.");
+app.get('/', (req, res) => {
+    res.send('Hello, World!');
 });
-
 
 // GET: Read list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -277,7 +288,6 @@ app.delete('/users/:id/', passport.authenticate('jwt', { session: false }), (req
 app.listen(port, '0.0.0.0', () => {
     console.log('Listening on Port ' + port);
 });
-
 
 
 
