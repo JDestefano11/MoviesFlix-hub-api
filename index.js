@@ -11,9 +11,11 @@ require('./passport.js');
 
 //mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
-mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-
+mongoose.connect(process.env.CONNECTION_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -35,6 +37,13 @@ app.use(cors({
 
 const auth = require('./auth');
 app.use('/auth', auth);
+
+
+
+// Define a route handler for the root endpoint
+app.get('/home', (req, res) => {
+    res.status(404).send("Oops! Looks like you've reached a page that doesn't exist.");
+});
 
 
 // GET: Read list of movies
