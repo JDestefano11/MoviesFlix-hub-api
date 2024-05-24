@@ -36,16 +36,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
 
-const allowedOrigins = ['http://localhost:1234', 'https://movies-flixhub-b3cf1708f9a6.herokuapp.com'];
+const allowedOrigins = [
+    'http://localhost:1234',
+    'https://movies-flixhub-b3cf1708f9a6.herokuapp.com'
+];
 
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            let message = 'The CORS policy fot this application doesn\'t allow access from the origin ' + origin;
-            return callback(new Error(message), false);
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
         }
-        return callback(null, true);
+        const errorMessage = `The CORS policy for this application doesn't allow access from the origin ${origin}`;
+        return callback(new Error(errorMessage), false);
     }
 }));
 
