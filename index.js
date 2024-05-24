@@ -32,7 +32,7 @@ mongoose.connect(connectionUri, {
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.use(express.static(path.join(__dirname, 'public')));
+2app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
 
@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
 });
 
 // GET: Read list of movies
-app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/movies', async (req, res) => {
     try {
         const movies = await Movie.find();
         res.status(200).json(movies);
