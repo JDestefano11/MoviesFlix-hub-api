@@ -36,6 +36,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
 
+const allowedOrigins = ['http://localhost:1234', 'https://movies-flixhub-b3cf1708f9a6.herokuapp.com'];
+
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
