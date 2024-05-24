@@ -32,7 +32,7 @@ mongoose.connect(connectionUri, {
 const app = express();
 const port = process.env.PORT || 8080;
 
-2app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
 
