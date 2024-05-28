@@ -1,3 +1,4 @@
+const dotenv = require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -7,19 +8,20 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 
+
 require('./passport.js');
 
 //mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-const connectionUri = process.env.CONNECTION_URI;
+const CONNECTION_URI = process.env.CONNECTION_URI;
 
-if (!connectionUri) {
+if (!CONNECTION_URI) {
     console.error("MongoDB connection string is missing!");
     process.exit(1);
 }
 
-mongoose.connect(connectionUri, {
+mongoose.connect(CONNECTION_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(() => {
@@ -36,14 +38,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
 
+const allowedOrigins = [
+    'http://localhost:1234',
+    'https://movies-flixhub-b3cf1708f9a6.herokuapp.com'
+];
+
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            let message = 'The CORS policy fot this application doesn\'t allow access from the origin ' + origin;
-            return callback(new Error(message), false);
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
         }
-        return callback(null, true);
+        const errorMessage = `The CORS policy for this application doesn't allow access from the origin ${origin}`;
+        return callback(new Error(errorMessage), false);
     }
 }));
 
@@ -61,6 +67,7 @@ app.get('/', (req, res) => {
 app.get('/movies', async (req, res) => {
     try {
         const movies = await Movie.find();
+        console.log('Movies', movies);
         res.status(200).json(movies);
     } catch (error) {
         console.error('Error fetching movies:', error);
@@ -288,6 +295,9 @@ app.delete('/users/:id/', passport.authenticate('jwt', { session: false }), (req
 app.listen(port, '0.0.0.0', () => {
     console.log('Listening on Port ' + port);
 });
+
+
+
 
 
 

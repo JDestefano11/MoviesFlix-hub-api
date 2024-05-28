@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const movieSchema = mongoose.Schema({
+    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
     Title: { type: String, required: true },
     Description: { type: String, required: true },
     Genre: {
@@ -14,7 +15,6 @@ const movieSchema = mongoose.Schema({
         BirthPlace: String,
         Bio: String
     },
-    ImagePath: { type: String, required: true }
 });
 
 // User Schema
@@ -37,7 +37,7 @@ userSchema.methods.validatePassword = function (password) {
 
 
 // Modules
-const Movie = mongoose.model('Movie', movieSchema);
+const Movie = mongoose.model('Movie', movieSchema,);
 const User = mongoose.model('User', userSchema);
 
 
