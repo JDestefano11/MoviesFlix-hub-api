@@ -63,6 +63,43 @@ app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
+// Login Endpoint
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    // Validate username and password
+    check('username', 'Username is required').notEmpty(),
+        check('password', 'Password is required').notEmpty();
+
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+
+    // Find user by username
+    const user = await User.findOne({ Username: username });
+
+    if (!user) {
+        return res.status(404).send('User not found');
+    }
+
+    // Check password
+    const isValidPassword = await bcrypt.compare(password, user.Password);
+
+    if (!isValidPassword) {
+        return res.status(401).send('Invalid password');
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+        expiresIn: '1h'
+    }8);
+
+    res.status(200).json({ token });
+});
+
+
 // GET: Read list of movies
 app.get('/movies', async (req, res) => {
     try {
