@@ -94,14 +94,14 @@ app.post('/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
         expiresIn: '1h'
-    }8);
+    });
 
     res.status(200).json({ token });
 });
 
 
 // GET: Read list of movies
-app.get('/movies', async (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
         const movies = await Movie.find();
         console.log('Movies', movies);
