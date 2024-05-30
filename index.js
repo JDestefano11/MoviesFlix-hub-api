@@ -101,7 +101,7 @@ app.post('/login', async (req, res) => {
 
 
 // GET: Read list of movies
-app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/movies', async (req, res) => {
     try {
         const movies = await Movie.find();
         console.log('Movies', movies);
