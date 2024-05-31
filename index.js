@@ -88,6 +88,21 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.use('/login', (req, res) => {
+    if (req.method === 'GET') {
+        res.status(405).send('Method Not Allowed');
+    }
+});
+
+
+
+
+
+
+
+
+
+
 // GET: Read list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
