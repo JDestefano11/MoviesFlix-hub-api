@@ -63,33 +63,6 @@ app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    try {
-        const user = await User.findOne({ username });
-
-        if (!user) {
-            return res.status(401).json({ message: 'Invalid username or password' });
-        }
-
-        const passwordMatch = await bcrypt.compare(password, user.password);
-
-        if (!passwordMatch) {
-            return res.status(401).json({ message: 'Invalid username or password' });
-        }
-
-        // JWT token
-        const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
-            expiresIn: '1h'
-        });
-
-        res.status(200).json({ token, message: 'Login successful' });
-    } catch (error) {
-        console.error('Error during login:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-});
 // GET: Read list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
