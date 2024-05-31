@@ -15,6 +15,7 @@ const movieSchema = mongoose.Schema({
         BirthPlace: String,
         Bio: String
     },
+    ImageUrl: String
 });
 
 // User Schema

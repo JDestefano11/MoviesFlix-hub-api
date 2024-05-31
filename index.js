@@ -101,9 +101,9 @@ app.post('/login', async (req, res) => {
 
 
 // GET: Read list of movies
-app.get('/movies', async (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
-        const movies = await Movie.find();
+        const movies = await Movie.find({}, 'title imageURL');
         console.log('Movies', movies);
         res.status(200).json(movies);
     } catch (error) {
