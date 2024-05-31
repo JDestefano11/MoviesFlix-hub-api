@@ -50,7 +50,10 @@ app.use(cors({
         }
         const errorMessage = `The CORS policy for this application doesn't allow access from the origin ${origin}`;
         return callback(new Error(errorMessage), false);
-    }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
+
 }));
 
 const auth = require('./auth');
