@@ -63,6 +63,31 @@ app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
+// Login endpoint
+app.post('/login', async (req, res) => {
+    const { Username, Password } = req.body;
+
+    try {
+        // Find user by username
+        const user = await User.findOne({ Username });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const match = await bcrypt.compare(Password, user.Password);
+        if (match) {
+            // Passwords match, generate JWT token
+            const token = jwt.sign({ id: user.id, Username: user.Username }, secretKey, { expiresIn: '1h' });
+            return res.status(200).json({ message: 'Login successful', token });
+        } else {
+            return res.status(401).json({ message: 'Invalid password' });
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 // GET: Read list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
