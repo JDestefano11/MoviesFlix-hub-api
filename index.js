@@ -44,7 +44,7 @@ const allowedOrigins = [
     'https://movies-flixhub-b3cf1708f9a6.herokuapp.com'
 ];
 
-app.use(cors({
+const corsOptions = {
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
             return callback(null, true);
@@ -57,31 +57,29 @@ app.use(cors({
         'Origin',
         'X-Requested-With',
         'Content-Type',
-        'Accept'
+        'Accept',
+        'Authorization'
     ],
     credentials: true,
-    optionSuccessStatus: 200
-}));
+    optionsSuccessStatus: 200
+};
 
-// Handle preflight requests
-app.options('*', cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
-        const errorMessage = `The CORS policy for this application doesn't allow access from the origin ${origin}`;
-        return callback(new Error(errorMessage), false);
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    alowedHeaders: [
-        'Origin',
-        'X-Requested-With',
-        'Content-Type',
-        'Accept'
-    ],
-    credentials: true,
-    optionSuccessStatus: 200
-}));
+// Apply CORS middleware to all routes
+app.use(cors(corsOptions));
+
+// Logging Middleware 
+app.use((req, res, next) => {
+    console.log('Recieved request from origin:', req.header.origin);
+    console.log('Recieved request with method:', req.method);
+    console.log('Recieved request with headers:', JSON.stringify(req.headers, null, 2));
+    next();
+});
+
+
+// Handle Preflight Requests 
+app.options('*', cors(corsOptions), (req, res) => {
+    res.status(200);
+});
 
 const auth = require('./auth');
 app.use('/auth', auth);
