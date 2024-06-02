@@ -7,6 +7,7 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 
 require('./passport.js');
@@ -37,6 +38,12 @@ const port = process.env.PORT || 8080;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
+
+// Proxy Server to Bypass CORS
+app.use('/api', createProxyMiddleware({
+    target: "https://openlibrary.org/account/login.json",
+    changeOrigin: true
+}));
 
 
 const allowedOrigins = [
