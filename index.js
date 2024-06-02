@@ -38,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
 
+
 const allowedOrigins = [
     'http://localhost:1234',
     'https://movies-flixhub-b3cf1708f9a6.herokuapp.com'
@@ -52,14 +53,38 @@ app.use(cors({
         return callback(new Error(errorMessage), false);
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
+    allowedHeaders: [
+        'Origin',
+        'X-Requested-With',
+        'Content-Type',
+        'Accept'
+    ],
+    credentials: true,
+    optionSuccessStatus: 200
+}));
 
+// Handle preflight requests
+app.options('*', cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        const errorMessage = `The CORS policy for this application doesn't allow access from the origin ${origin}`;
+        return callback(new Error(errorMessage), false);
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    alowedHeaders: [
+        'Origin',
+        'X-Requested-With',
+        'Content-Type',
+        'Accept'
+    ],
+    credentials: true,
+    optionSuccessStatus: 200
 }));
 
 const auth = require('./auth');
 app.use('/auth', auth);
-
-
 
 // Define a route handler for the root endpoint
 app.get('/', (req, res) => {
