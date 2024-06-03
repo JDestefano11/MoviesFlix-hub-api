@@ -63,6 +63,12 @@ app.use(cors({
     }
 }));
 
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+});
+
+
 
 const auth = require('./auth');
 app.use('/auth', auth);
