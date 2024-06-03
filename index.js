@@ -12,10 +12,10 @@ const { check, validationResult } = require('express-validator');
 
 require('./passport.js');
 
-mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-/*const CONNECTION_URI = process.env.CONNECTION_URI;
+const CONNECTION_URI = process.env.CONNECTION_URI;
 
 if (!CONNECTION_URI) {
     console.error("MongoDB connection string is missing!");
@@ -30,7 +30,7 @@ mongoose.connect(CONNECTION_URI)
         console.error(`MongoDB connection error: ${err.message}`);
         process.exit(1);
     });
-*/
+
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -59,7 +59,6 @@ app.use(cors({
         return callback(null, true);
     }
 }));
-
 
 
 const auth = require('./auth');
