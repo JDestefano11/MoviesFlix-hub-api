@@ -7,7 +7,7 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+
 
 
 require('./passport.js');
@@ -22,15 +22,15 @@ if (!CONNECTION_URI) {
     process.exit(1);
 }
 
-mongoose.connect(CONNECTION_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => {
-    console.log('MongoDB connected...');
-}).catch(err => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
-});
+mongoose.connect(CONNECTION_URI)
+    .then(() => {
+        console.log('MongoDB connected...');
+    })
+    .catch((err) => {
+        console.error(`MongoDB connection error: ${err.message}`);
+        process.exit(1);
+    });
+
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -39,25 +39,33 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
 
-// Proxy Server to Bypass CORS
-app.use('/api', createProxyMiddleware({
-    target: "https://openlibrary.org/account/login.json",
-    changeOrigin: true
-}));
 
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+});
 
 const allowedOrigins = [
     'http://localhost:1234',
-    'https://movies-flixhub-b3cf1708f9a6.herokuapp.com'
+    'https://moviesflix-hub-fca46ebf9888.herokuapp.com/'
 ];
 
 const corsOptions = {
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Log the origin
+        console.log(`Received request from origin: ${origin}`);
+
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) {
             return callback(null, true);
         }
-        const errorMessage = `The CORS policy for this application doesn't allow access from the origin ${origin}`;
-        return callback(new Error(errorMessage), false);
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        } else {
+            const errorMessage = `The CORS policy for this application doesn't allow access from the origin ${origin}`;
+            return callback(new Error(errorMessage), false);
+        }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
@@ -68,25 +76,27 @@ const corsOptions = {
         'Authorization'
     ],
     credentials: true,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-// Apply CORS middleware to all routes
+// Apply the CORS middleware to your Express app
 app.use(cors(corsOptions));
 
-// Logging Middleware 
+// Example logging middleware
 app.use((req, res, next) => {
-    console.log('Recieved request from origin:', req.header.origin);
-    console.log('Recieved request with method:', req.method);
-    console.log('Recieved request with headers:', JSON.stringify(req.headers, null, 2));
+    console.log(`Received request with method: ${req.method}`);
+    console.log(`Received request with headers: ${JSON.stringify(req.headers, null, 2)}`);
     next();
 });
 
-
-// Handle Preflight Requests 
-app.options('*', cors(corsOptions), (req, res) => {
-    res.status(200);
+// Error handling middleware
+app.use((err, req, res, next) => {
+    if (err instanceof Error && err.message.includes('CORS')) {
+        return res.status(403).json({ message: err.message });
+    }
+    next(err);
 });
+
 
 const auth = require('./auth');
 app.use('/auth', auth);
