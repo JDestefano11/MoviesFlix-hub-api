@@ -22,7 +22,10 @@ if (!CONNECTION_URI) {
     process.exit(1);
 }
 
-mongoose.connect(CONNECTION_URI)
+mongoose.connect(CONNECTION_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
     .then(() => {
         console.log('MongoDB connected...');
     })
