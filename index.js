@@ -43,12 +43,7 @@ app.use(express.json());
 app.use(passport.initialize());
 
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    next();
-});
 
-app.use(cors());
 
 let allowedOrigins = ['http://localhost:1234', 'http://localhost:8080', 'https://moviesflix-hub-fca46ebf9888.herokuapp.com/'];
 
