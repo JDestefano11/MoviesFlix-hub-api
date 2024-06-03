@@ -50,7 +50,7 @@ app.use((req, res, next) => {
 
 app.use(cors());
 
-let allowedOrigins = ['http://localhost:1234', 'https://moviesflix-hub-fca46ebf9888.herokuapp.com/'];
+let allowedOrigins = ['http://localhost:1234', 'http://localhost:8080', 'https://moviesflix-hub-fca46ebf9888.herokuapp.com/'];
 
 app.use(cors({
     origin: (origin, callback) => {
