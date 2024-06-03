@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { User } = require('./models.js');
-const jwtSecret = 'ThisIsATemporarySecretKey123'
+const jwtSecret = require('crypto').randomBytes(32).toString('hex');
 
 
 

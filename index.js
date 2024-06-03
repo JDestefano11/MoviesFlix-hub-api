@@ -69,6 +69,7 @@ const corsOptions = {
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
+
         'Origin',
         'X-Requested-With',
         'Content-Type',
@@ -112,6 +113,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
         const movies = await Movie.find({}, 'title imageURL');
         console.log('Movies', movies);
         res.status(200).json(movies);
+        8
     } catch (error) {
         console.error('Error fetching movies:', error);
         res.status(500).send('Error fetching movies');
