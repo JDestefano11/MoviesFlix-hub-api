@@ -1,8 +1,9 @@
-const express = require('express');
+
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { User } = require('./models.js');
 const jwtSecret = require('crypto').randomBytes(32).toString('hex');
+const express = require('express');
 
 
 const router = express.Router();
