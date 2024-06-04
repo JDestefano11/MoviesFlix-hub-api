@@ -64,8 +64,10 @@ app.use((req, res, next) => {
 
 app.use(cors(corsOptions));
 
-const auth = require('./auth');
-app.use('/auth', auth);
+
+const authRouter = require('./auth'); // Import the router
+app.use('/auth', authRouter); // Use the router for '/auth' endpoints
+
 
 // Define a route handler for the root endpoint
 app.get('/', (req, res) => {
