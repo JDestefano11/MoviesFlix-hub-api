@@ -7,7 +7,6 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
-const authRouter = require('./auth');
 
 
 require('./passport.js');
@@ -59,13 +58,14 @@ const corsOptions = {
 };
 
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Request2ed-With, Content-Type, Accept');
     next();
 });
 
 app.use(cors(corsOptions));
 
-app.use('/auth', authRouter);
+const auth = require('./auth');
+app.use('/auth', auth)
 
 // Define a route handler for the root endpoint
 app.get('/', (req, res) => {
