@@ -3,7 +3,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { User } = require('./models.js');
 const jwtSecret = require('crypto').randomBytes(32).toString('hex');
-
+const router = express.Router();
 
 
 // Define a constants for jwt secret
