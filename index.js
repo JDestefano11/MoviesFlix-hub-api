@@ -43,16 +43,27 @@ app.use(express.json());
 app.use(passport.initialize());
 
 
+const allowedOrigins = ['http://localhost:1234', 'http://localhost:8080', 'https://moviesflix-hub-fca46ebf9888.herokuapp.com/'];
 
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    headers: ['Content-Type', 'Authorization']
+};
 
-let allowedOrigins = ['http://localhost:1234', 'http://localhost:8080', 'https://moviesflix-hub-fca46ebf9888.herokuapp.com/'];
-
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+ap2p.use((req, res, next) => {
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
 });
 
+app.use(cors(corsOptions));
 
 const auth = require('./auth');
 app.use('/auth', auth);
@@ -65,12 +76,11 @@ app.get('/', (req, res) => {
 // GET: Read list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
-        const movies = await Movie.find({}, 'title imageURL');
-        console.log('Movies', movies);
-        res.status(200).json(movies);
+        const { title, imageURL } = await Movie.find().select('title imageURL').lean();
+        res.json(title.map((title, index) => ({ title, imageURL: imageURL[index] })));
     } catch (error) {
-        console.error('Error fetching movies:', error);
-        res.status(500).send('Error fetching movies');
+        console.error(error);
+        res.status(500).json({ error: 'Error fetching movies' });
     }
 });
 
