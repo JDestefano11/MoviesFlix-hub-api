@@ -13,3 +13,4 @@ router.post('/login', passport.authenticate('local', { session: false }), (req, 
     res.json({ token, username });
 });
 
+module.exports = router;
