@@ -56,10 +56,9 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     // Validate username and password
 
-    // Assuming you have a function to authenticate users
     const user = await authenticateUser(username, password);
     if (user) {
-        // Generate and send a JWT token as response upon successful authentication
+
         const token = generateToken(user);
         res.json({ token });
     } else {
@@ -67,12 +66,8 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Log out end point for my app
+// Log out end point 
 app.post('/logout', (req, res) => {
-    // Clear the JWT token stored on the client-side (from localStorage)
-    // Optionally, you can also invalidate the token on the server-side (not possible with JWT)
-
-    // Send a response indicating successful logout
     res.status(200).json({ message: 'Logout successful' });
 });
 
