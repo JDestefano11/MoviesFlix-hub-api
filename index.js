@@ -65,7 +65,7 @@ app.use((req, res, next) => {
 app.use(cors(corsOptions));
 
 const auth = require('./auth');
-app.use('/auth', auth)
+app.use('/auth', auth);
 
 // Define a route handler for the root endpoint
 app.get('/', (req, res) => {
