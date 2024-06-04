@@ -1,4 +1,3 @@
-const dotenv = require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -8,31 +7,27 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 
-
 require('./passport.js');
 
 //mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-const CONNECTION_URI = process.env.CONNECTION_URI;
+const connectionUri = process.env.CONNECTION_URI;
 
-if (!CONNECTION_URI) {
+if (!connectionUri) {
     console.error("MongoDB connection string is missing!");
     process.exit(1);
 }
 
-mongoose.connect(CONNECTION_URI, {
+mongoose.connect(connectionUri, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-    .then(() => {
-        console.log('MongoDB connected...');
-    })
-    .catch((err) => {
-        console.error(`MongoDB connection error: ${err.message}`);
-        process.exit(1);
-    });
-
+    useUnifiedTopology: true,
+}).then(() => {
+    console.log('MongoDB connected...');
+}).catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+});
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -41,32 +36,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
 
-
-const allowedOrigins = ['http://localhost:1234', 'http://localhost:8080', 'https://moviesflix-hub-fca46ebf9888.herokuapp.com/'];
-
-const corsOptions = {
+app.use(cors({
     origin: (origin, callback) => {
-        if (allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            let message = 'The CORS policy fot this application doesn\'t allow access from the origin ' + origin;
+            return callback(new Error(message), false);
         }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    headers: ['Content-Type', 'Authorization']
-};
+        return callback(null, true);
+    }
+}));
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Request2ed-With, Content-Type, Accept');
-    next();
-});
+const auth = require('./auth');
+app.use('/auth', auth);
 
-app.use(cors(corsOptions));
-
-
-const authRouter = require('./auth'); // Import the router
-app.use('/auth', authRouter); // Use the router for '/auth' endpoints
 
 
 // Define a route handler for the root endpoint
@@ -77,11 +60,11 @@ app.get('/', (req, res) => {
 // GET: Read list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
-        const { title, imageURL } = await Movie.find().select('title imageURL').lean();
-        res.json(title.map((title, index) => ({ title, imageURL: imageURL[index] })));
+        const movies = await Movie.find();
+        res.status(200).json(movies);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error fetching movies' });
+        console.error('Error fetching movies:', error);
+        res.status(500).send('Error fetching movies');
     }
 });
 
@@ -305,10 +288,3 @@ app.delete('/users/:id/', passport.authenticate('jwt', { session: false }), (req
 app.listen(port, '0.0.0.0', () => {
     console.log('Listening on Port ' + port);
 });
-
-
-
-
-
-
-
