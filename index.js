@@ -7,7 +7,7 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
-const authRouter = require('./auth.js');
+const authRouter = require('/auth.');
 
 
 require('./passport.js');
@@ -65,7 +65,7 @@ app.use((req, res, next) => {
 
 app.use(cors(corsOptions));
 
-app.use('./auth.js', authRouter);
+app.use('/auth', authRouter);
 
 // Define a route handler for the root endpoint
 app.get('/', (req, res) => {
