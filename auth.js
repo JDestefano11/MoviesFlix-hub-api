@@ -6,14 +6,21 @@ const jwtSecret = require('crypto').randomBytes(32).toString('hex');
 
 
 
-const router = express.Router();
+// Define a constants for jwt secret
+const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_here';
 
-router.post('/login', passport.authenticate('local', { session: false }), (req, res) => {
-    const { _id, username } = req.user;
-    const token = jwt.sign({ id: _id, username }, jwtSecret);
-    res.json({ token, username }); // Include username in the response
+// Define a function to generate token
+const generateToken = ({ _id, username }) => jwt.sign({ id: _id, username }, JWT_SECRET);
+
+router.post('/login', passport.authenticate('local', { session: false }), (req, res, next) => {
+    try {
+        const { _id, username } = req.user;
+        const token = generateToken({ _id, username });
+        res.json({ token, username }); // Include username in the response
+    } catch (err) {
+        next(err); // Handle any errors
+    }
 });
 
 module.exports = router;
-
 
