@@ -47,14 +47,33 @@ app.use(cors({
     }
 }));
 
-const auth = require('./auth');
-app.use('/auth', auth);
-
-
-
 // Define a route handler for the root endpoint
 app.get('/', (req, res) => {
     res.send('Hello, World!');
+});
+
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    // Validate username and password
+
+    // Assuming you have a function to authenticate users
+    const user = await authenticateUser(username, password);
+    if (user) {
+        // Generate and send a JWT token as response upon successful authentication
+        const token = generateToken(user);
+        res.json({ token });
+    } else {
+        res.status(401).json({ error: 'Invalid username or password' });
+    }
+});
+
+// Log out end point for my app
+app.post('/logout', (req, res) => {
+    // Clear the JWT token stored on the client-side (from localStorage)
+    // Optionally, you can also invalidate the token on the server-side (not possible with JWT)
+
+    // Send a response indicating successful logout
+    res.status(200).json({ message: 'Logout successful' });
 });
 
 // GET: Read list of movies
