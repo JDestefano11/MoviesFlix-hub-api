@@ -5,7 +5,7 @@ const { User } = require('./models.js');
 const jwtSecret = require('crypto').randomBytes(32).toString('hex');
 
 
-const router = express = express.Router();
+const router = express.Router();
 
 router.post('/login', passport.authenticate('local', { session: false }), (req, res) => {
     const { _id, username } = req.user;
