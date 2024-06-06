@@ -57,10 +57,29 @@ app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
-// Login endpoint  
+// Login endpoint
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    // Validate username and password
+
+    // Define the authenticateUser function
+    async function authenticateUser(username, password) {
+        const user = await User.findOne({ Username: username });
+        if (!user) {
+            return null;
+        }
+        const isValidPassword = await bcrypt.compare(password, user.Password);
+        if (!isValidPassword) {
+            return null;
+        }
+        return user;
+    }
+
+    // Define the generateToken function
+    function generateToken(user) {
+        const payload = { userId: user._id, username: user.Username };
+        const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
+        return token;
+    }
 
     const user = await authenticateUser(username, password);
     if (user) {
