@@ -9,10 +9,10 @@ const { check, validationResult } = require('express-validator');
 
 require('./passport.js');
 
-//mongoose.connect('mongodb://localhost:27017/moviesDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-const connectionUri = process.env.CONNECTION_URI;
+/*const connectionUri = process.env.CONNECTION_URI;
 
 if (!connectionUri) {
     console.error("MongoDB connection string is missing!");
@@ -29,6 +29,7 @@ mongoose.connect(connectionUri, {
     process.exit(1);
 });
 
+*/
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -67,6 +68,12 @@ app.post('/login', async (req, res) => {
         if (!user) {
             return null;
         }
+
+
+        console.log("Provided password:", password);
+        console.log("Stored hashed password:", user.Password);
+
+
         const isValidPassword = await bcrypt.compare(password, user.Password);
         if (!isValidPassword) {
             return null;
