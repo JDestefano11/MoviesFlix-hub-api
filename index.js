@@ -36,11 +36,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
 
+const allowedOrigins = ['http://localhost:3000', 'http://your-frontend-domain.com'];
+
 app.use(cors({
     origin: (origin, callback) => {
+        // Allow requests with no origin, like mobile apps or curl requests
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) === -1) {
-            let message = 'The CORS policy fot this application doesn\'t allow access from the origin ' + origin;
+            let message = 'The CORS policy for this application doesn\'t allow access from the origin ' + origin;
             return callback(new Error(message), false);
         }
         return callback(null, true);
