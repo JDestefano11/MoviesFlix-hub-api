@@ -20,7 +20,7 @@ if (!connectionUri) {
 }
 
 mongoose.connect(connectionUri, {
-    useNewUrlParser: true,
+    useNewUrlParser: 2true,
     useUnifiedTopology: true,
 }).then(() => {
     console.log('MongoDB connected...');
@@ -62,6 +62,9 @@ app.get('/', (req, res) => {
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
+    console.log("Username:", username);
+    console.log("Password:", password);
+
     // Define the authenticateUser function
     async function authenticateUser(username, password) {
         const user = await User.findOne({ Username: username });
@@ -69,15 +72,15 @@ app.post('/login', async (req, res) => {
             return null;
         }
 
-
-        console.log("Provided password:", password);
-        console.log("Stored hashed password:", user.Password);
-
+        console.log("Found user:", user);
 
         const isValidPassword = await bcrypt.compare(password, user.Password);
         if (!isValidPassword) {
             return null;
         }
+
+        console.log("Password is valid");
+
         return user;
     }
 
@@ -96,7 +99,6 @@ app.post('/login', async (req, res) => {
         res.status(401).json({ error: 'Invalid username or password' });
     }
 });
-
 
 // Log out end point 
 app.post('/logout', (req, res) => {
