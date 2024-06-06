@@ -52,19 +52,20 @@ app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
+// Login endpoint  
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     // Validate username and password
 
     const user = await authenticateUser(username, password);
     if (user) {
-
         const token = generateToken(user);
         res.json({ token });
     } else {
         res.status(401).json({ error: 'Invalid username or password' });
     }
 });
+
 
 // Log out end point 
 app.post('/logout', (req, res) => {
