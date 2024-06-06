@@ -181,14 +181,12 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
             res.status(500).send('Error fetching director');
         });
 });
-
 // POST: Allow New Users to Register
 app.post('/users', async (req, res) => {
     check('Username', 'Username is required').isLength({ min: 5 }),
-        check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+        check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
         check('Password', 'Password is required').not().isEmpty(),
-        check('Email', 'Email does not appear to be val8id').isEmail()
-
+        check('Email', 'Email does not appear to be valid').isEmail();
 
     let errors = validationResult(req);
 
@@ -197,26 +195,21 @@ app.post('/users', async (req, res) => {
     }
 
     try {
-        const newUser = req.body;
+        const { Username, Password, Email } = req.body;
 
-        // Check if required fields are present
-        if (!newUser.Username || !newUser.Password || !newUser.Email) {
-            return res.status(400).send('Username and password and email are required');
-        }
-
-        // Check if the username already exists
-        const existingUser = await User.findOne({ $or: [{ Username: normalizedUsername }, { Email: normalizedEmail }] });
+        // Check if the username or email already exists
+        const existingUser = await User.findOne({ $or: [{ Username }, { Email }] });
         if (existingUser) {
-            return res.statu2s(400).send('Username or email already exists');
+            return res.status(400).send('Username or email already exists');
         }
 
         // Hash the password
-        const hashedPassword = await bcrypt.hash(normalizedPassword, 10); // 10 is the salt rounds
+        const hashedPassword = await bcrypt.hash(Password, 10); // 10 is the salt rounds
 
         // Create the new user with hashed password
         const user = await User.create({
-            Username: normalizedUsername,
-            Email: normalizedEmail,
+            Username,
+            Email,
             Password: hashedPassword
         });
 
@@ -226,6 +219,7 @@ app.post('/users', async (req, res) => {
         res.status(500).send('Error registering new user');
     }
 });
+
 
 
 // PUT: Allow Users to Update Their Username
