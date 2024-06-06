@@ -9,10 +9,10 @@ const { check, validationResult } = require('express-validator');
 
 require('./passport.js');
 
-mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-/*const connectionUri = process.env.CONNECTION_URI;
+const connectionUri = process.env.CONNECTION_URI;
 
 if (!connectionUri) {
     console.error("MongoDB connection string is missing!");
@@ -20,7 +20,7 @@ if (!connectionUri) {
 }
 
 mongoose.connect(connectionUri, {
-    useNewUrlParser: 2true,
+    useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(() => {
     console.log('MongoDB connected...');
@@ -29,7 +29,7 @@ mongoose.connect(connectionUri, {
     process.exit(1);
 });
 
-*/
+
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -62,26 +62,32 @@ app.get('/', (req, res) => {
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    console.log("Username:", username);
-    console.log("Password:", password);
+    console.log("Received login request for Username:", username);
 
     // Define the authenticateUser function
     async function authenticateUser(username, password) {
-        const user = await User.findOne({ Username: username });
-        if (!user) {
+        try {
+            const user = await User.findOne({ Username: username });
+            if (!user) {
+                console.log("User not found for Username:", username);
+                return null;
+            }
+
+            console.log("Found user for Username:", username, user);
+
+            const isValidPassword = await bcrypt.compare(password, user.Password);
+            if (!isValidPassword) {
+                console.log("Invalid password for Username:", username);
+                return null;
+            }
+
+            console.log("Password is valid for Username:", username);
+
+            return user;
+        } catch (error) {
+            console.error("Error during authentication:", error);
             return null;
         }
-
-        console.log("Found user:", user);
-
-        const isValidPassword = await bcrypt.compare(password, user.Password);
-        if (!isValidPassword) {
-            return null;
-        }
-
-        console.log("Password is valid");
-
-        return user;
     }
 
     // Define the generateToken function
@@ -93,12 +99,21 @@ app.post('/login', async (req, res) => {
 
     const user = await authenticateUser(username, password);
     if (user) {
+        console.log("User authenticated successfully for Username:", username);
         const token = generateToken(user);
         res.json({ user, token });
     } else {
+        console.log("Authentication failed for Username:", username);
         res.status(401).json({ error: 'Invalid username or password' });
     }
 });
+
+
+
+
+
+
+
 
 // Log out end point 
 app.post('/logout', (req, res) => {
