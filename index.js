@@ -35,8 +35,7 @@ const port = process.env.PORT || 8080;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
-
-const allowedOrigins = ['http://localhost:3000', 'http://your-frontend-domain.com'];
+const allowedOrigins = ['http://localhost:1234'];
 
 app.use(cors({
     origin: (origin, callback) => {
@@ -49,7 +48,6 @@ app.use(cors({
         return callback(null, true);
     }
 }));
-
 // Define a route handler for the root endpoint
 app.get('/', (req, res) => {
     res.send('Hello, World!');
@@ -142,7 +140,7 @@ app.post('/users', async (req, res) => {
     check('Username', 'Username is required').isLength({ min: 5 }),
         check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
         check('Password', 'Password is required').not().isEmpty(),
-        check('Email', 'Email does not appear to be valid').isEmail()
+        check('Email', 'Email does not appear to be val8id').isEmail()
 
 
     let errors = validationResult(req);
