@@ -35,6 +35,7 @@ const port = process.env.PORT || 8080;
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+
 app.use(passport.initialize());
 
 const allowedOrigins = ['http://localhost:1234', 'https://moviesflix-hub-fca46ebf9888.herokuapp.com'];
@@ -72,6 +73,8 @@ app.post('/login', async (req, res) => {
                 console.log("User not found for Username:", username);
                 return null;
             }
+
+            console.log("Hashed password retrieved from the database:", user.Password);
 
             console.log("Found user for Username:", username, user);
 
