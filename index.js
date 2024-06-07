@@ -173,20 +173,19 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
 // POST: Allow New Users to Register
 app.post('/users', async (req, res) => {
     const validationRules = [
-        check('Username', 'Username is required').isLength({ min: 5 }),
-        check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
-        check('Password', 'Password is required').not().isEmpty(),
-        check('Email', 'Email does not appear to be valid').isEmail(),
+        check('username', 'Username is required').isLength({ min: 5 }),
+        check('username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
+        check('password', 'Password is required').not().isEmpty(),
+        check('email', 'Email does not appear to be valid').isEmail(),
     ];
 
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
-    }
-
     try {
-        // rest of the code...
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+
     } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ error: 'Error registering user' });
