@@ -169,47 +169,29 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
             res.status(500).send('Error fetching director');
         });
 });
+
 // POST: Allow New Users to Register
 app.post('/users', async (req, res) => {
-    check('Username', 'Username is required').isLength({ min: 5 }),
+    const validationRules = [
+        check('Username', 'Username is required').isLength({ min: 5 }),
         check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
         check('Password', 'Password is required').not().isEmpty(),
-        check('Email', 'Email does not appear to be valid').isEmail();
+        check('Email', 'Email does not appear to be valid').isEmail(),
+    ];
 
-    let errors = validationResult(req);
+    const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        2
         return res.status(422).json({ errors: errors.array() });
     }
 
     try {
-        const { Username, Password, Email } = req.body;
-
-        // Check if the username or email already exists
-        const existingUser = await User.findOne({ $or: [{ Username }, { Email }] });
-        if (existingUser) {
-            return res.status(400).send('Username or email already exists');
-        }
-
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(Password, 10); // 10 is the salt rounds
-
-        // Create the new user with hashed password
-        const user = await User.create({
-            username,
-            email,
-            password: hashedPassword
-        });
-
-        res.status(201).json(user);
+        // rest of the code...
     } catch (error) {
-        console.error('Error registering new user:', error);
-        res.status(500).send('Error registering new user');
+        console.error('Error registering user:', error);
+        res.status(500).json({ error: 'Error registering user' });
     }
 });
-
-
 
 // PUT: Allow Users to Update Their Username
 app.put('/users/:userId', passport.authenticate('jwt', { session: false }), async (req, res) => {
