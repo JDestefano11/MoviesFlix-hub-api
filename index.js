@@ -110,13 +110,6 @@ app.post('/login', async (req, res) => {
     }
 });
 
-
-
-
-
-
-
-
 // Log out end point 
 app.post('/logout', (req, res) => {
     res.status(200).json({ message: 'Logout successful' });
@@ -334,11 +327,6 @@ app.delete('/users/:id/', passport.authenticate('jwt', { session: false }), (req
 });
 
 
-
-
-
-
-
 app.listen(port, '0.0.0.0', () => {
     console.log('Listening on Port ' + port);
-});
+}); 

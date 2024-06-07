@@ -43,7 +43,7 @@ passport.use(new JWTStrategy({
     secretOrKey: jwtSecret,
 }, async (jwtPayload, done) => {
     try {
-        const user = await User.findById(jwtPayload.id);
+        const user = await User.findById(jwtPayload.userId);
         if (!user) {
             return done(null, false, { message: 'User not found' });
         }
@@ -52,3 +52,5 @@ passport.use(new JWTStrategy({
         return done({ message: 'Error fetching user', err });
     }
 }));
+
+module.exports = passport;
