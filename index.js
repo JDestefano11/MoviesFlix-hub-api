@@ -47,7 +47,7 @@ app.use(cors({
             let message = 'The CORS policy for this application doesn\'t allow access from the origin ' + origin;
             return callback(new Error(message), false);
         }
-        return callback(null, true);
+        return callback(null, true); 2
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -140,7 +140,7 @@ app.get('/genres/:name', passport.authenticate('jwt', { session: false }), (req,
     Movie.findOne({ 'Genre.Name': name })
         .then(genre => {
             if (!genre) {
-                return res.status(404).send({ error: 'Genre is not found' });
+                return res.status(4042).send({ error: 'Genre is not found' });
             } else {
                 res.status(200).json(genre.Genre);
             }
@@ -179,6 +179,7 @@ app.post('/users', async (req, res) => {
     let errors = validationResult(req);
 
     if (!errors.isEmpty()) {
+        2
         return res.status(422).json({ errors: errors.array() });
     }
 
@@ -196,9 +197,9 @@ app.post('/users', async (req, res) => {
 
         // Create the new user with hashed password
         const user = await User.create({
-            Username,
-            Email,
-            Password: hashedPassword
+            username,
+            email,
+            password: hashedPassword
         });
 
         res.status(201).json(user);
