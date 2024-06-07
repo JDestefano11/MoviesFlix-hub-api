@@ -171,14 +171,7 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
 });
 
 // POST: Allow New Users to Register
-app.post('/users', async (req, res) => {
-    const validationRules = [
-        check('username', 'Username is required').isLength({ min: 5 }),
-        check('username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
-        check('password', 'Password is required').not().isEmpty(),
-        check('email', 'Email does not appear to be valid').isEmail(),
-    ];
-
+app.post('/users', validationRules, async (req, res) => {
     try {
         // Check for validation errors
         const errors = validationResult(req);
@@ -186,11 +179,29 @@ app.post('/users', async (req, res) => {
             return res.status(422).json({ errors: errors.array() });
         }
 
+        // Extract user data from request body
+        const { username, password, email } = req.body;
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ error: 'User already exists' });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create new user
+        const newUser = new User({ username, password: hashedPassword, email });
+        await newUser.save();
+
+        res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ error: 'Error registering user' });
     }
 });
+
 
 // PUT: Allow Users to Update Their Username
 app.put('/users/:userId', passport.authenticate('jwt', { session: false }), async (req, res) => {
