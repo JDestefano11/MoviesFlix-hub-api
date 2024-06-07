@@ -11,7 +11,6 @@ require('./passport.js');
 
 //mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
 
-
 const connectionUri = process.env.CONNECTION_URI;
 
 if (!connectionUri) {
