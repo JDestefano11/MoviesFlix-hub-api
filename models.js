@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const movieSchema = mongoose.Schema({
     _id: { type: mongoose.Schema.Types.ObjectId, required: true },
