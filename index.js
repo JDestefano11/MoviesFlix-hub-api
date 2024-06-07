@@ -3,7 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const { Movie, User } = require('./models.js');
 const passport = require('passport');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 
