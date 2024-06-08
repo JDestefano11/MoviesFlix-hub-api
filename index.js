@@ -19,6 +19,16 @@ if (!connectionUri) {
     process.exit(1);
 }
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    console.error("JWT secret is missing!");
+    process.exit(1);
+}
+
+
+
+
 mongoose.connect(connectionUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
