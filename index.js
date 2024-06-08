@@ -6,7 +6,7 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
-
+const jwt = require('jsonwebtoken');
 require('./passport.js');
 
 //mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
