@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 require('./passport.js');
 
 //mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -101,6 +102,7 @@ async function authenticateUser(username, password) {
 }
 
 function generateJwtToken(user) {
+    // Generate the JWT token using the randomly generated secret key
     return jwt.sign({ userId: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
 }
 // Log out end point 
