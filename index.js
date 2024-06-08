@@ -170,20 +170,24 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
         });
 });
 
-
-
-const validationRules = [
-    check('username')
-        .isLength({ min: 5 }).withMessage('Username must be at least 5 characters long')
-        .isAlphanumeric().withMessage('Username must contain only letters and numbers'),
-    check('password')
-        .notEmpty().withMessage('Password is required'),
-    check('email')
-        .isEmail().withMessage('Email must be valid'),
-];
-
 // POST: Allow New Users to Register
-app.post('/users', validationRules, async (req, res) => {
+app.post('/users', [
+    check('username')
+        .notEmpty()
+        .withMessage('Username is required')
+        .isLength({ min: 3 })
+        .withMessage('Username must be at least 3 characters long'),
+    check('password')
+        .notEmpty()
+        .withMessage('Password is required')
+        .isLength({ min: 6 })
+        .withMessage('Password must be at least 6 characters long'),
+    check('email')
+        .notEmpty()
+        .withMessage('Email is required')
+        .isEmail()
+        .withMessage('Invalid email format')
+], async (req, res) => {
     try {
         // Check for validation errors
         const errors = validationResult(req);
