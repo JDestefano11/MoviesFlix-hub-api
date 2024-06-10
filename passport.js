@@ -4,7 +4,7 @@ const JWTStrategy = require('passport-jwt').Strategy;
 const bcrypt = require('bcryptjs');
 const { ExtractJwt } = require('passport-jwt');
 const { User } = require('./models.js');
-const { nanoid } = require('nanoid');
+import { nanoid } from 'nanoid';
 
 // Generate a random secret key 
 const JWT_SECRET = nanoid();
