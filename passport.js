@@ -67,5 +67,4 @@ passport.use(new JWTStrategy(opts,
 
 
 
-module.exports = passport;
-module.exports = JWT_SECRET; 
+module.exports = { passport, JWT_SECRET };
