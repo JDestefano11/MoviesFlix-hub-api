@@ -10,10 +10,8 @@ const crypto = require('crypto');
 const JWT_SECRET = crypto.randomBytes(32).toString('hex');
 
 const opts = {
-    jwtFromRequest:
-        ExtractJwt.fromAuthHeaderAsBearerToken
-            (),
-    secretOrKey: JWT_SECRET
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: require('crypto').randomBytes(32).toString('hex')
 };
 
 
