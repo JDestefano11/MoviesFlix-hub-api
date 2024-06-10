@@ -4,7 +4,17 @@ const JWTStrategy = require('passport-jwt').Strategy;
 const bcrypt = require('bcryptjs');
 const { ExtractJwt } = require('passport-jwt');
 const { User } = require('./models.js');
-const jwtSecret = require('crypto').randomBytes(32).toString('hex');
+
+// Generate a random secret key 
+const JWT_SECRET = crypto.randomBytes(32).toString('hex');
+
+const opts = {
+    jwtFromRequest:
+        ExtractJwt.fromAuthHeaderAsBearerToken
+            (),
+    secretOrKey: JWT_SECRET
+};
+
 
 // Local Strategy for basic HTTP authentication
 passport.use(new LocalStrategy({
@@ -38,19 +48,25 @@ passport.use(new LocalStrategy({
 ));
 
 // JWT Strategy for token authentication
-passport.use(new JWTStrategy({
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: jwtSecret,
-}, async (jwtPayload, done) => {
-    try {
-        const user = await User.findById(jwtPayload.userId);
-        if (!user) {
-            return done(null, false, { message: 'User not found' });
+passport.use(new JWTStrategy(opts,
+    async (jwt_payload, done) => {
+        try {
+            const user = await
+                User.findById(jwt_payload.userId);
+            if (user) {
+                return done(null, user);
+            }
+            else {
+                return done(null, false);
+            }
+        } catch (error) {
+            return done(error, false);
         }
-        return done(null, user);
-    } catch (err) {
-        return done({ message: 'Error fetching user', err });
-    }
-}));
+    }));
+
+
+
+
 
 module.exports = passport;
+module.exports = JWT_SECRET; 

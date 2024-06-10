@@ -8,6 +8,7 @@ const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const JWT_SECRET = require('./passport');
 require('./passport.js');
 
 //mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -18,7 +19,6 @@ if (!connectionUri) {
     console.error("MongoDB connection string is missing!");
     process.exit(1);
 }
-
 
 mongoose.connect(connectionUri, {
     useNewUrlParser: true,
@@ -61,51 +61,25 @@ app.get('/', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
+
     const { username, password } = req.body;
     console.log(`Received login request for username: ${username}`);
 
     try {
-        const user = await authenticateUser(username, password);
-        if (!user) {
-            return res.status(401).send('Authentication failed');
-        }
+        const user = await User.findOne({ username });
 
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({ message: 'Authentication failed' });
+        }
         const token = generateJwtToken(user);
         return res.status(200).json({ message: 'Login successful', token });
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Error during authentication:', error);
         return res.status(500).send('Internal server error');
     }
 });
 
-async function authenticateUser(username, password) {
-    try {
-        const user = await User.findOne({ username });
-        if (!user) {
-            console.log(`User not found for username: ${username}`);
-            return null;
-        }
-
-        console.log(`Found user for username: ${username}`, user);
-
-        const isValidPassword = await bcrypt.compare(password, user.password);
-        if (!isValidPassword) {
-            console.log(`Invalid password for username: ${username}`);
-            return null;
-        }
-
-        console.log(`Password is valid for username: ${username}`);
-        return user;
-    } catch (error) {
-        console.error('Error during authentication:', error);
-        return null;
-    }
-}
-
-function generateJwtToken(user) {
-    // Generate the JWT token using the randomly generated secret key
-    return jwt.sign({ userId: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
-}
 // Log out end point 
 app.post('/logout', (req, res) => {
     res.status(200).json({ message: 'Logout successful' });
