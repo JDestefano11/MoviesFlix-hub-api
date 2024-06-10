@@ -4,10 +4,10 @@ const JWTStrategy = require('passport-jwt').Strategy;
 const bcrypt = require('bcryptjs');
 const { ExtractJwt } = require('passport-jwt');
 const { User } = require('./models.js');
-import { nanoid } from 'nanoid';
+const { v4: uuidv4 } = require('uuid');
 
-// Generate a random secret key 
-const JWT_SECRET = nanoid();
+// Generate a random secret key (UUID)
+const JWT_SECRET = uuidv4();
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
