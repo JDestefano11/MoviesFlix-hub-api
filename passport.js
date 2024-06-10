@@ -4,16 +4,15 @@ const JWTStrategy = require('passport-jwt').Strategy;
 const bcrypt = require('bcryptjs');
 const { ExtractJwt } = require('passport-jwt');
 const { User } = require('./models.js');
-const crypto = require('crypto');
+const { nanoid } = require('nanoid');
 
 // Generate a random secret key 
-const JWT_SECRET = crypto.randomBytes(32).toString('hex');
+const JWT_SECRET = nanoid();
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: require('crypto').randomBytes(32).toString('hex')
+    secretOrKey: JWT_SECRET
 };
-
 
 // Local Strategy for basic HTTP authentication
 passport.use(new LocalStrategy({

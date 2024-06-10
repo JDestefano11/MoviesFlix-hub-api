@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+const nanoid = require('nanoid')
 const JWT_SECRET = require('./passport');
 require('./passport.js');
 
