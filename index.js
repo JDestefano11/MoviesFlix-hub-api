@@ -29,7 +29,6 @@ mongoose.connect(connectionUri, {
     process.exit(1);
 });
 
-
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -163,9 +162,9 @@ app.post('/users', async (req, res) => {
 
         // Create new user
         const newUser = new User({ username, password: hashedPassword, email });
-        await newUser.save();
+        const savedUser = await newUser.save();
 
-        res.status(201).json({ message: 'User registered successfully' });
+        res.status(201).json({ user: savedUser });
     } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ error: 'Error registering user' });
