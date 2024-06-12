@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = require('./passport');
+const { JWT_SECRET } = require('./passport');
 require('./passport.js');
 
 //mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -154,7 +154,7 @@ app.post('/users', async (req, res) => {
         // Check if user already exists
         const existingUser = await User.findOne({ username });
         if (existingUser) {
-            return res.status(400).json({ error: 'User already exists' });
+            const savedUser = await newUser.save(); return res.status(400).json({ error: 'User already exists' });
         }
 
         // Hash the password
@@ -162,9 +162,9 @@ app.post('/users', async (req, res) => {
 
         // Create new user
         const newUser = new User({ username, password: hashedPassword, email });
-        const savedUser = await newUser.save();
 
-        res.status(201).json({ user: savedUser });
+
+        res.status(201).json(savedUser);
     } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ error: 'Error registering user' });
