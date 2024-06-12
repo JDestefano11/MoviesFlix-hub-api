@@ -2,12 +2,11 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const { Movie, User } = require('./models.js');
-const passport = require('passport');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('./passport');
+const { passport, JWT_SECRET } = require('./passport');
 require('./passport.js');
 
 //mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -66,12 +65,10 @@ app.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ username });
 
-        /* if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: 'Authentication failed' });
-        } */
-        if (!user) {
+        if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ message: 'Authentication failed' });
         }
+
         const token = JWT_SECRET;
         return res.status(200).json({ message: 'Login successful', token });
     }
