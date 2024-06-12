@@ -154,7 +154,7 @@ app.post('/users', async (req, res) => {
         // Check if user already exists
         const existingUser = await User.findOne({ username });
         if (existingUser) {
-            const savedUser = await newUser.save(); return res.status(400).json({ error: 'User already exists' });
+            return res.status(400).json({ error: 'User already exists' });
         }
 
         // Hash the password
@@ -162,7 +162,7 @@ app.post('/users', async (req, res) => {
 
         // Create new user
         const newUser = new User({ username, password: hashedPassword, email });
-
+        const savedUser = await newUser.save();
 
         res.status(201).json(savedUser);
     } catch (error) {
