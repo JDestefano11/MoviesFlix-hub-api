@@ -65,10 +65,10 @@ app.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ username });
 
-        /* if (!user || !(await bcrypt.compare(password, user.password))) {
-             return res.status(401).json({ message: 'Authentication failed' });
-         }
-         */
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({ message: 'Authentication failed' });
+        }
+
 
         const token = JWT_SECRET;
         return res.status(200).json({ message: 'Login successful', token });
