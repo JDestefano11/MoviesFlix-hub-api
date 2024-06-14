@@ -147,16 +147,15 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
             res.status(500).send('Error fetching director');
         });
 });
-
 app.post('/users', async (req, res) => {
     try {
         // Log raw request body
         console.log('Raw request body:', req.body);
 
         // Extract user data from request body
-        const { username, password, email, name, birthday } = req.body;
+        const { username, password, email, birthday } = req.body;
 
-        console.log('Received user data:', { username, email, name, birthday });
+        console.log('Received user data:', { username, email, birthday });
 
         // Check if user already exists
         const existingUser = await User.findOne({ username });
@@ -170,7 +169,7 @@ app.post('/users', async (req, res) => {
         console.log('Password hashed');
 
         // Create new user
-        const newUser = new User({ username, password: hashedPassword, email, name, birthday });
+        const newUser = new User({ username, password: hashedPassword, email, birthday });
         const savedUser = await newUser.save();
 
         console.log('User registered successfully:', savedUser);
@@ -180,7 +179,6 @@ app.post('/users', async (req, res) => {
         res.status(500).json({ error: 'Error registering user' });
     }
 });
-
 
 // PUT: Allow Users to Update Their Username
 app.put('/users/:userId', passport.authenticate('jwt', { session: false }), async (req, res) => {
