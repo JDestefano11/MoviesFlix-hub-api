@@ -148,9 +148,11 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
         });
 });
 
-// POST: Allow New Users to Register
 app.post('/users', async (req, res) => {
     try {
+        // Log raw request body
+        console.log('Raw request body:', req.body);
+
         // Extract user data from request body
         const { username, password, email, name, birthday } = req.body;
 
