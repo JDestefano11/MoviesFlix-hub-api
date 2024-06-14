@@ -86,6 +86,7 @@ app.post('/logout', (req, res) => {
 
 // GET movies endpoint
 app.get('/movies',
+    passport.authenticate('jwt', { session: false, optional: true }),
     async (req, res) => {
         try {
             const movies = await Movie.find();
@@ -147,11 +148,10 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
         });
 });
 
-// POST: Allow New Users to Register
 app.post('/users', async (req, res) => {
     try {
         // Extract user data from request body
-        const { username, password, email } = req.body;
+        const { username, password, email, birthday } = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({ username });
@@ -163,7 +163,7 @@ app.post('/users', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create new user
-        const newUser = new User({ username, password: hashedPassword, email });
+        const newUser = new User({ username, password: hashedPassword, email, birthday });
         const savedUser = await newUser.save();
 
         res.status(201).json(savedUser);
@@ -172,6 +172,7 @@ app.post('/users', async (req, res) => {
         res.status(500).json({ error: 'Error registering user' });
     }
 });
+
 
 
 // PUT: Allow Users to Update Their Username
