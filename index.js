@@ -152,21 +152,26 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
 app.post('/users', async (req, res) => {
     try {
         // Extract user data from request body
-        const { username, password, email } = req.body;
+        const { username, password, email, name, birthday } = req.body;
+
+        console.log('Received user data:', { username, email, name, birthday });
 
         // Check if user already exists
         const existingUser = await User.findOne({ username });
         if (existingUser) {
+            console.log('User already exists');
             return res.status(400).json({ error: 'User already exists' });
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
+        console.log('Password hashed');
 
         // Create new user
-        const newUser = new User({ username, password: hashedPassword, email });
+        const newUser = new User({ username, password: hashedPassword, email, name, birthday });
         const savedUser = await newUser.save();
 
+        console.log('User registered successfully:', savedUser);
         res.status(201).json(savedUser);
     } catch (error) {
         console.error('Error registering user:', error);
