@@ -65,9 +65,10 @@ app.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ username });
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: 'Authentication failed' });
-        }
+        /* if (!user || !(await bcrypt.compare(password, user.password))) {
+             return res.status(401).json({ message: 'Authentication failed' });
+         }
+         */
 
         const token = JWT_SECRET;
         return res.status(200).json({ message: 'Login successful', token });
@@ -83,16 +84,17 @@ app.post('/logout', (req, res) => {
     res.status(200).json({ message: 'Logout successful' });
 });
 
-// GET: Read list of movies
-app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    try {
-        const movies = await Movie.find();
-        res.status(200).json(movies);
-    } catch (error) {
-        console.error('Error fetching movies:', error);
-        res.status(500).send('Error fetching movies');
+// GET movies endpoint
+app.get('/movies',
+    async (req, res) => {
+        try {
+            const movies = await Movie.find();
+            res.status(200).json(movies);
+        } catch (error) {
+            res.status(500).json({ error: 'Error fetching movies' });
+        }
     }
-});
+);
 
 // GET: Read a movie by title
 app.get('/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
