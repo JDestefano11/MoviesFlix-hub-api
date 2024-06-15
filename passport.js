@@ -6,14 +6,6 @@ const { ExtractJwt } = require('passport-jwt');
 const { User } = require('./models.js');
 const { v4: uuidv4 } = require('uuid');
 
-// Generate a random secret key (UUID)
-const JWT_SECRET = uuidv4();
-
-const opts = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: JWT_SECRET
-};
-
 // Local Strategy for basic HTTP authentication
 passport.use(new LocalStrategy({
     usernameField: 'username',
@@ -42,28 +34,28 @@ passport.use(new LocalStrategy({
         } catch (error) {
             return done(error);
         }
-    }
-));
-
-// JWT Strategy for token authentication
-passport.use(new JWTStrategy(opts,
-    async (jwt_payload, done) => {
-        try {
-            const user = await
-                User.findById(jwt_payload.userId);
-            if (user) {
-                return done(null, user);
-            }
-            else {
-                return done(null, false);
-            }
-        } catch (error) {
-            return done(error, false);
-        }
     }));
 
+// Generate a random secret key (UUID) for JWT signing
+const JWT_SECRET = uuidv4();
 
+const opts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: JWT_SECRET
+};
 
-
+// JWT Strategy for token authentication
+passport.use(new JWTStrategy(opts, async (jwt_payload, done) => {
+    try {
+        const user = await User.findById(jwt_payload.userId);
+        if (user) {
+            return done(null, user);
+        } else {
+            return done(null, false);
+        }
+    } catch (error) {
+        return done(error, false);
+    }
+}));
 
 module.exports = { passport, JWT_SECRET };
