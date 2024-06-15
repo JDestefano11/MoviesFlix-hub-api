@@ -57,27 +57,25 @@ app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
-app.post('/login', (req, res, next) => {
-    passport.authenticate('local', { session: false }, (err, user, info) => {
-        if (err) {
-            console.error('Error during authentication:', err);
-            return res.status(500).send('Internal server error');
-        }
+app.post('/login', async (req, res) => {
 
-        if (!user) {
+    const { username, password } = req.body;
+    console.log(`Received login request for username: ${username}`);
+
+    try {
+        const user = await User.findOne({ username });
+
+        if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ message: 'Authentication failed' });
         }
 
-        req.login(user, { session: false }, (err) => {
-            if (err) {
-                console.error('Error during login:', err);
-                return res.status(500).send('Internal server error');
-            }
-
-            const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' }); // Example: token expires in 1 hour
-            return res.status(200).json({ message: 'Login successful', token });
-        });
-    })(req, res, next);
+        const token = JWT_SECRET;
+        return res.status(200).json({ message: 'Login successful', token });
+    }
+    catch (error) {
+        console.error('Error during authentication:', error);
+        return res.status(500).send('Internal server error');
+    }
 });
 
 // Log out end point 
@@ -85,18 +83,16 @@ app.post('/logout', (req, res) => {
     res.status(200).json({ message: 'Logout successful' });
 });
 
-// GET movies endpoint
-app.get('/movies',
-    passport.authenticate('jwt', { session: false, optional: true }),
-    async (req, res) => {
-        try {
-            const movies = await Movie.find();
-            res.status(200).json(movies);
-        } catch (error) {
-            res.status(500).json({ error: 'Error fetching movies' });
-        }
+// GET: Read list of movies
+app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    try {
+        const movies = await Movie.find();
+        res.status(200).json(movies);
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+        res.status(500).send('Error fetching movies');
     }
-);
+});
 
 // GET: Read a movie by title
 app.get('/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -148,38 +144,33 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
             res.status(500).send('Error fetching director');
         });
 });
+
+// POST: Allow New Users to Register
 app.post('/users', async (req, res) => {
     try {
-        // Log raw request body
-        console.log('Raw request body:', req.body);
-
         // Extract user data from request body
-        const { username, password, email, birthday } = req.body;
-
-        console.log('Received user data:', { username, email, birthday });
+        const { username, password, email } = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({ username });
         if (existingUser) {
-            console.log('User already exists');
             return res.status(400).json({ error: 'User already exists' });
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
-        console.log('Password hashed');
 
         // Create new user
-        const newUser = new User({ username, password: hashedPassword, email, birthday });
+        const newUser = new User({ username, password: hashedPassword, email });
         const savedUser = await newUser.save();
 
-        console.log('User registered successfully:', savedUser);
         res.status(201).json(savedUser);
     } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ error: 'Error registering user' });
     }
 });
+
 
 // PUT: Allow Users to Update Their Username
 app.put('/users/:userId', passport.authenticate('jwt', { session: false }), async (req, res) => {
