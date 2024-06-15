@@ -56,25 +56,28 @@ app.use(cors({
 app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    console.log(`Received login request for username: ${username}`);
 
-    try {
-        const user = await User.findOne({ username });
+app.post('/login', (req, res, next) => {
+    passport.authenticate('local', { session: false }, (err, user, info) => {
+        if (err) {
+            console.error('Error during authentication:', err);
+            return res.status(500).send('Internal server error');
+        }
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
+        if (!user) {
             return res.status(401).json({ message: 'Authentication failed' });
         }
 
-        // Generate JWT token
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' }); // Example: token expires in 1 hour
+        req.login(user, { session: false }, (err) => {
+            if (err) {
+                console.error('Error during login:', err);
+                return res.status(500).send('Internal server error');
+            }
 
-        return res.status(200).json({ message: 'Login successful', token });
-    } catch (error) {
-        console.error('Error during authentication:', error);
-        return res.status(500).send('Internal server error');
-    }
+            const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' }); // Example: token expires in 1 hour
+            return res.status(200).json({ message: 'Login successful', token });
+        });
+    })(req, res, next);
 });
 
 // Log out end point 
