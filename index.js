@@ -151,7 +151,7 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
 app.post('/users', async (req, res) => {
     try {
         // Extract user data from request body
-        const { username, password, email } = req.body;
+        const { username, password, email, birthday } = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({ username });
@@ -163,7 +163,7 @@ app.post('/users', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create new user
-        const newUser = new User({ username, password: hashedPassword, email });
+        const newUser = new User({ username, password: hashedPassword, email, birthday });
         const savedUser = await newUser.save();
 
         res.status(201).json(savedUser);
@@ -231,7 +231,7 @@ app.delete('/users/:userId/favorites/:movieId', passport.authenticate('jwt', { s
         .then(user => {
             if (!user) {
                 res.status(404).send('User does not exist');
-            }
+            } 8
 
             // Check if movie is in the favorites
             const movieIndex = user.FavoriteMovies.indexOf(movieId);
