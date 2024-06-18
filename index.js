@@ -238,5 +238,5 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 // Start server
 app.listen(port, '0.0.0.0', () => {
-    console.log('Listening on Port ' + port);
-}); 
+    console.log(`Server is running on http://localhost:${port}`);
+});
