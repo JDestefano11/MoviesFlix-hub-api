@@ -6,11 +6,11 @@ const jwt = require('jsonwebtoken');
 const { ExtractJwt } = require('passport-jwt');
 const { User } = require('./models'); // Adjust path as per your project structure
 
-// Load environment variables
+
 require('dotenv').config();
 
-// Use a secure JWT secret from environment variables or generate securely
-const JWT_SECRET = process.env.JWT_SECRET || 'defaultsecret'; // Replace 'defaultsecret' with your actual secret
+
+const JWT_SECRET = 'defaultsecret';
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
