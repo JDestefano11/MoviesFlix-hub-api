@@ -87,17 +87,24 @@ app.post('/logout', (req, res) => {
     res.status(200).json({ message: 'Logout successful' });
 });
 
-// GET movies endpoint
-app.get('/movies',
-    passport.authenticate('jwt', { session: false }), async (req, res) => {
-        try {
-            const movies = await Movie.find();
-            res.status(200).json(movies);
-        } catch (error) {
-            res.status(500).json({ error: 'Error fetching movies' });
+app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    try {
+        console.log('Authenticated user:', req.user);
+
+        const movies = await Movie.find();
+        console.log('Movies found:', movies);
+
+        if (movies.length === 0) {
+            return res.status(404).json({ error: 'No movies found' });
         }
+
+        res.status(200).json(movies);
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+        res.status(500).json({ error: 'Error fetching movies' });
     }
-);
+});
+
 
 // GET: Read a movie by title
 app.get('/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
