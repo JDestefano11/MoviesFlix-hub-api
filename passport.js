@@ -4,10 +4,8 @@ const JWTStrategy = require('passport-jwt').Strategy;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { ExtractJwt } = require('passport-jwt');
-const { User } = require('./models');
-
-// Load environment variables
-require('dotenv').config();
+const { User } = require('./models.js');
+const { v4: uuidv4 } = require('uuid');
 
 // Use a secure JWT secret from environment variables or generate securely
 const JWT_SECRET = process.env.JWT_SECRET || 'defaultsecret'; // Replace 'defaultsecret' with your actual secret
@@ -62,4 +60,4 @@ const generateJWTToken = (user) => {
     });
 };
 
-module.exports = { passport, generateJWTToken };
+module.exports = { passport, JWT_SECRET };
