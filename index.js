@@ -24,15 +24,15 @@ if (!connectionUri) {
     process.exit(1);
 }
 
-mongoose.connect(connectionUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => {
-    console.log('MongoDB connected...');
-}).catch(err => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
-});
+mongoose.connect(connectionUri)
+    .then(() => {
+        console.log('MongoDB connected...');
+    })
+    .catch((err) => {
+        console.error('MongoDB connection error:', err);
+        process.exit(1);
+    });
+
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
