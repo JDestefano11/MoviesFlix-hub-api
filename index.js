@@ -18,7 +18,6 @@ require('dotenv').config();
 //mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-MongoDB connection
 const connectionUri = process.env.CONNECTION_URI;
 
 if (!connectionUri) {
