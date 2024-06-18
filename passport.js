@@ -9,8 +9,8 @@ const { User } = require('./models'); // Adjust path as per your project structu
 // Load environment variables
 require('dotenv').config();
 
-// Use a secure JWT secret from environment variables or generate securely
-const JWT_SECRET = process.env.JWT_SECRET || 'defaultsecret'; // Replace 'defaultsecret' with your actual secret
+
+const JWT_SECRET = process.env.JWT_SECRET || 'defaultsecret';
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

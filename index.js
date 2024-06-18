@@ -15,26 +15,26 @@ const port = process.env.PORT || 8080;
 require('dotenv').config();
 
 
-mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-// MongoDB connection
-// const connectionUri = process.env.CONNECTION_URI;
+MongoDB connection
+const connectionUri = process.env.CONNECTION_URI;
 
-// if (!connectionUri) {
-//     console.error("MongoDB connection string is missing!");
-//     process.exit(1);
-// }
+if (!connectionUri) {
+    console.error("MongoDB connection string is missing!");
+    process.exit(1);
+}
 
-// mongoose.connect(connectionUri, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-// }).then(() => {
-//     console.log('MongoDB connected...');
-// }).catch(err => {
-//     console.error('MongoDB connection error:', err);
-//     process.exit(1);
-// });
+mongoose.connect(connectionUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => {
+    console.log('MongoDB connected...');
+}).catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+});
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
