@@ -15,23 +15,23 @@ const port = process.env.PORT || 8080;
 require('dotenv').config();
 
 
-//mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://destefanoj380:JCodes11!@cluster0.ww6knul.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
 
-const connectionUri = process.env.CONNECTION_URI;
+// const connectionUri = process.env.CONNECTION_URI;
 
-if (!connectionUri) {
-    console.error("MongoDB connection string is missing!");
-    process.exit(1);
-}
+// if (!connectionUri) {
+//     console.error("MongoDB connection string is missing!");
+//     process.exit(1);
+// }
 
-mongoose.connect(connectionUri)
-    .then(() => {
-        console.log('MongoDB connected...');
-    })
-    .catch((err) => {
-        console.error('MongoDB connection error:', err);
-        process.exit(1);
-    });
+// mongoose.connect(connectionUri)
+//     .then(() => {
+//         console.log('MongoDB connected...');
+//     })
+//     .catch((err) => {
+//         console.error('MongoDB connection error:', err);
+//         process.exit(1);
+//     });
 
 
 // Middleware
@@ -60,10 +60,9 @@ app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
-// Login endpoint
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    console.log(`Received login request for username: ${username}`);
+    console.log(`Received login request for username: ${username}`); // Log received username
 
     try {
         const user = await User.findOne({ username });
@@ -79,6 +78,7 @@ app.post('/login', async (req, res) => {
         return res.status(500).send('Internal server error');
     }
 });
+
 
 // Logout endpoint
 app.post('/logout', (req, res) => {
