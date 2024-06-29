@@ -235,6 +235,42 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
     }
 });
 
+// POST: Allows users to add a movie to their favorites
+app.post('/users/:userId/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    req.checkParams('userId', 'User ID is required').notEmpty().isString().trim().isLength({ min: 1 });
+    req.checkParams('movieId', 'Movie ID is required').notEmpty().isString().trim().isLength({ min: 1 });
+
+    const errors = req.validationErrors();
+
+    if (errors) {
+        return res.status(422).json({ errors });
+    }
+
+    const userId = req.params.userId;
+    const movieId = req.params.movieId;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).send('User does not exist');
+        }
+
+        if (user.FavoriteMovies.includes(movieId)) {
+            return res.status(400).send('Movie is already in the favorites');
+        }
+
+        user.FavoriteMovies.push(movieId);
+        await user.save();
+
+        res.status(200).send('Movie has been added to the favorites');
+    } catch (error) {
+        console.error('Error adding movie to favorites:', error);
+        res.status(500).send('Error adding movie to favorites');
+    }
+});
+
+
+
 // Start server
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server is running on http://localhost:${port}`);
