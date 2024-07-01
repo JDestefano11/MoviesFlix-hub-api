@@ -236,11 +236,10 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 });
 
 
-
 // POST: Add a movie to user's favorite movies
 app.post('/users/:username/favoriteMovies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const username = req.params.username;
-    const movieId = req.params.movieId;
+    const movieId = req.body.movieId; // Assuming movieId is sent in the request body
 
     try {
         // Ensure the authenticated user matches the username in the URL
@@ -254,6 +253,11 @@ app.post('/users/:username/favoriteMovies', passport.authenticate('jwt', { sessi
             return res.status(404).json({ error: 'User not found' });
         }
 
+        // Validate movieId
+        if (!movieId) {
+            return res.status(400).json({ error: 'MovieId is required' });
+        }
+
         // Check if movieId is already in user's favoriteMovies array
         if (user.favoriteMovies.includes(movieId)) {
             return res.status(400).json({ error: 'Movie is already in favorites' });
@@ -263,7 +267,7 @@ app.post('/users/:username/favoriteMovies', passport.authenticate('jwt', { sessi
         user.favoriteMovies.push(movieId);
         await user.save();
 
-        res.status(200).json(user); // Return updated user document if needed
+        res.status(200).json(user);
     } catch (error) {
         console.error('Error adding favorite movie:', error);
         res.status(500).json({ error: 'Error adding favorite movie' });
