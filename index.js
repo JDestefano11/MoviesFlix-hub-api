@@ -235,40 +235,50 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
     }
 });
 
-
-
-// POST: Add a movie to user's favorite movies
-app.post('/users/:username/favoriteMovies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const username = req.params.username;
-    const movieId = req.params.movieId;
+app.post('/users/:username/favoriteMovies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { username } = req.params;
+    const { movieId } = req.body;
 
     try {
-        // Ensure the authenticated user matches the username in the URL
+        // Check if the authenticated user is the same as the username in the params
         if (req.user.username !== username) {
-            return res.status(403).json({ error: 'Unauthorized' });
+            return res.status(403).send('Unauthorized');
         }
 
         // Find the user by username
         const user = await User.findOne({ username });
+
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).send('User not found');
         }
 
-        // Check if movieId is already in user's favoriteMovies array
-        if (user.favoriteMovies.includes(movieId)) {
-            return res.status(400).json({ error: 'Movie is already in favorites' });
+        // Find the movie by movieId
+        const movie = await Movie.findById(movieId);
+
+        if (!movie) {
+            return res.status(404).send('Movie not found');
         }
 
-        // Add movieId to user's favoriteMovies array
-        user.favoriteMovies.push(movieId);
+        // Add movie to user's favoriteMovies if not already added
+        if (!user.favoriteMovies.includes(movieId)) {
+            user.favoriteMovies.push(movieId);
+        }
+
+        // Save the updated user
         await user.save();
 
-        res.status(200).json(user); // Return updated user document if needed
+        res.status(200).json(user);
     } catch (error) {
         console.error('Error adding favorite movie:', error);
-        res.status(500).json({ error: 'Error adding favorite movie' });
+        res.status(500).send('Internal server error');
     }
 });
+
+
+
+
+
+
 
 // Start server
 app.listen(port, '0.0.0.0', () => {
