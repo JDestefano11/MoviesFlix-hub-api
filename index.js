@@ -236,14 +236,15 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 });
 
 
+
 // POST: Add a movie to user's favorite movies
-app.post('/users/:userId/favoriteMovies/:movieId', async (req, res) => {
-    const userId = req.params.userId;
+app.post('/users/:username/favoriteMovies/:movieId', async (req, res) => {
+    const username = req.params.username; // Corrected parameter name
     const movieId = req.params.movieId;
 
     try {
-        // Find the user by userId
-        const user = await User.findById(userId);
+        // Find the user by username
+        const user = await User.findOne({ username }); // Using findOne with username
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
@@ -263,11 +264,6 @@ app.post('/users/:userId/favoriteMovies/:movieId', async (req, res) => {
         res.status(500).json({ error: 'Error adding favorite movie' });
     }
 });
-
-
-
-
-
 
 
 // Start server
