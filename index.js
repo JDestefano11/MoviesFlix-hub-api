@@ -248,7 +248,7 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 
 // POST: Add movie to user's favorites
-router.post('/users/:userId/favoriteMovies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/users/:userId/favoriteMovies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { userId, movieId } = req.params;
 
     try {
