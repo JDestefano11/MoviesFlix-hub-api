@@ -236,6 +236,50 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Update favorite movies
+app.put('/users/:userId/favorites', async (req, res) => {
+    const userId = req.params.userId;
+    const { movieId, isFavorite } = req.body;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        if (isFavorite) {
+            user.FavoriteMovies.push(movieId);
+        } else {
+            user.FavoriteMovies = user.FavoriteMovies.filter(id => id !== movieId);
+        }
+        await user.save();
+        res.json(user);
+    } catch (error) {
+        console.error('Error updating favorite movies:', error);
+        res.status(500).json({ error: 'Failed to update favorite movies' });
+    }
+});
+
+
+
+
+
+
+
+
+
+
 // Start server
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server is running on http://localhost:${port}`);
