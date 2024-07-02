@@ -238,7 +238,17 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 
 
-app.post('/users/:userId/favoriteMovies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+
+
+
+
+
+
+
+
+
+// POST: Add movie to user's favorites
+router.post('/users/:userId/favoriteMovies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { userId, movieId } = req.params;
 
     try {
@@ -268,6 +278,13 @@ app.post('/users/:userId/favoriteMovies/:movieId', passport.authenticate('jwt', 
         res.status(500).json({ error: 'Error adding favorite movie' });
     }
 });
+
+
+
+
+
+
+
 
 
 
