@@ -236,59 +236,6 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-// POST: Add movie to user's favorites
-app.post('/users/:userId/favoriteMovies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { userId, movieId } = req.params;
-
-    try {
-        // Ensure the authenticated user matches the userId in the URL
-        if (req.user._id.toString() !== userId) {
-            return res.status(403).json({ error: 'Unauthorized' });
-        }
-
-        // Find the user by userId
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Check if movieId is already in user's favoriteMovies array
-        if (user.favoriteMovies.includes(movieId)) {
-            return res.status(400).json({ error: 'Movie is already in favorites' });
-        }
-
-        // Add movieId to user's favoriteMovies array
-        user.favoriteMovies.push(movieId);
-        await user.save();
-
-        res.status(200).json(user);
-    } catch (error) {
-        console.error('Error adding favorite movie:', error);
-        res.status(500).json({ error: 'Error adding favorite movie' });
-    }
-});
-
-
-
-
-
-
-
-
-
-
-
 // Start server
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server is running on http://localhost:${port}`);
