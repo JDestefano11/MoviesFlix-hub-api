@@ -265,9 +265,6 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 
 
-
-
-
 app.post('/favorites/add', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { movieId } = req.body;
 
@@ -278,7 +275,7 @@ app.post('/favorites/add', passport.authenticate('jwt', { session: false }), asy
 
     try {
         // Find the authenticated user
-        const user = await User.findById(req.user.id);
+        const user = await User.findOne({ username: req.user.username });
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -300,10 +297,6 @@ app.post('/favorites/add', passport.authenticate('jwt', { session: false }), asy
     }
 });
 
-
-
-
-
 app.post('/favorites/remove', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { movieId } = req.body;
 
@@ -314,7 +307,7 @@ app.post('/favorites/remove', passport.authenticate('jwt', { session: false }), 
 
     try {
         // Find the authenticated user
-        const user = await User.findById(req.user.id);
+        const user = await User.findOne({ username: req.user.username });
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -336,8 +329,6 @@ app.post('/favorites/remove', passport.authenticate('jwt', { session: false }), 
         res.status(500).json({ error: 'Failed to remove movie from favorites' });
     }
 });
-
-
 
 
 
