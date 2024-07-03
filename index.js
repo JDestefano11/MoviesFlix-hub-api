@@ -60,7 +60,7 @@ app.get('/', (req, res) => {
 // Login endpoint
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    console.log(`Received login request for username: ${username}`);
+
 
     try {
         const user = await User.findOne({ username });
@@ -233,7 +233,6 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 
 
-// Add movie to favorites list 
 app.post('/users/:userId/favorite/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { userId, movieId } = req.params;
 
@@ -319,8 +318,6 @@ app.delete('/users/:userId/favorite/:movieId', passport.authenticate('jwt', { se
         res.status(500).send('Error removing movie from favorites');
     }
 });
-
-
 
 
 
