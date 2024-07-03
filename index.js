@@ -268,145 +268,74 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 
 
+app.post('/favorites/add', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { movieId } = req.body;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// POST endpoint to add a movie to a user's favorites
-app.post('/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { username, movieId } = req.params;
+    // Validate movieId presence
+    if (!movieId) {
+        return res.status(400).json({ error: 'MovieId is required' });
+    }
 
     try {
-        const user = req.user;
+        // Find the authenticated user
+        const user = await User.findById(req.user.id);
 
-        // Ensure the current user matches the requested username
-        if (user.username !== username) {
-            return res.status(403).json({ error: 'Unauthorized' });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
         }
 
-        // Fetch movie from database by movieId
-        const movie = await Movie.findById(movieId);
-
-        if (!movie) {
-            return res.status(404).json({ error: 'Movie not found' });
-        }
-
-        // Check if movie already exists in user's favorites
-        const alreadyExists = user.favoriteMovies.some(favMovie => favMovie.equals(movie._id));
-
-        if (alreadyExists) {
+        // Check if the movieId already exists in favorites
+        if (user.favorites.includes(movieId)) {
             return res.status(400).json({ error: 'Movie already in favorites' });
         }
 
-        // Add the movie to user's favorites
-        user.favoriteMovies.push(movie._id);
+        // Add movieId to favorites array in User model
+        user.favorites.push(movieId);
         await user.save();
 
-        res.status(201).json({ message: 'Movie added to favorites', movie });
+        res.status(200).json({ message: 'Movie added to favorites' });
     } catch (error) {
         console.error('Error adding movie to favorites:', error);
         res.status(500).json({ error: 'Failed to add movie to favorites' });
     }
 });
 
-// GET endpoint to retrieve a user's favorite movies
-app.get('/:username/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { username } = req.params;
+
+
+
+
+app.post('/favorites/remove', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { movieId } = req.body;
+
+    // Validate movieId presence
+    if (!movieId) {
+        return res.status(400).json({ error: 'MovieId is required' });
+    }
 
     try {
-        const user = req.user;
+        // Find the authenticated user
+        const user = await User.findById(req.user.id);
 
-        // Ensure the current user matches the requested username
-        if (user.username !== username) {
-            return res.status(403).json({ error: 'Unauthorized' });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
         }
 
-        // Find the user by username and populate the favorites array
-        await user.populate('favorites').execPopulate();
+        // Check if the movieId exists in favorites
+        const index = user.favorites.indexOf(movieId);
+        if (index === -1) {
+            return res.status(400).json({ error: 'Movie not found in favorites' });
+        }
 
-        res.json(user.favorites);
-    } catch (err) {
-        res.status(500).json({ message: 'Error fetching favorites', error: err });
+        // Remove movieId from favorites array in User model
+        user.favorites.splice(index, 1);
+        await user.save();
+
+        res.status(200).json({ message: 'Movie removed from favorites' });
+    } catch (error) {
+        console.error('Error removing movie from favorites:', error);
+        res.status(500).json({ error: 'Failed to remove movie from favorites' });
     }
 });
-
-// DELETE endpoint to remove a movie from a user's favorites
-app.delete('/:username/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { username, movieId } = req.params;
-
-    try {
-        const user = req.user;
-
-        // Ensure the current user matches the requested username
-        if (user.username !== username) {
-            return res.status(403).json({ error: 'Unauthorized' });
-        }
-
-        // Find the user by username and remove movieId from favorites
-        const updatedUser = await User.findOneAndUpdate(
-            { username: username },
-            { $pull: { favorites: movieId } },
-            { new: true }
-        );
-
-        if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        res.json(updatedUser);
-    } catch (err) {
-        res.status(500).json({ message: 'Error removing from favorites', error: err });
-    }
-});
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
