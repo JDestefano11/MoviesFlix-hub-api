@@ -235,14 +235,11 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 
 
-
-
 // POST endpoint to add a movie to a user's favorites
-app.post('/users/:username/movies/:movieId', async (req, res) => {
+app.post('/users/:username/favoriteMovies/:movieId', async (req, res) => {
     const { username, movieId } = req.params;
 
     try {
-        // Assuming you have a User model/schema and Movie model/schema
         // Fetch user from database by username
         const user = await User.findOne({ username });
 
@@ -250,7 +247,7 @@ app.post('/users/:username/movies/:movieId', async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // Assuming movieId exists in your database
+        // Fetch movie from database by movieId
         const movie = await Movie.findById(movieId);
 
         if (!movie) {
@@ -274,12 +271,6 @@ app.post('/users/:username/movies/:movieId', async (req, res) => {
         res.status(500).json({ error: 'Failed to add movie to favorites' });
     }
 });
-
-
-
-
-
-
 
 
 
