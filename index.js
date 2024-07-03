@@ -232,138 +232,48 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 });
 
 
-// POST: Add movie to user's favorites
-app.post('/users/:userId/favoriteMovies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { userId, movieId } = req.params;
+
+
+
+
+
+// POST endpoint to add a movie to a user's favorites
+app.post('/users/:username/movies/:movieId', async (req, res) => {
+    const { username, movieId } = req.params;
 
     try {
-        // Check if the user exists
-        const user = await User.findById(userId);
+        // Assuming you have a User model/schema and Movie model/schema
+        // Fetch user from database by username
+        const user = await User.findOne({ username });
+
         if (!user) {
-            return res.status(404).send('User not found');
+            return res.status(404).json({ error: 'User not found' });
         }
 
-        // Check if the movie exists
+        // Assuming movieId exists in your database
         const movie = await Movie.findById(movieId);
+
         if (!movie) {
-            return res.status(404).send('Movie not found');
+            return res.status(404).json({ error: 'Movie not found' });
         }
 
-        // Check if the movie is already in the user's favorites
-        if (user.favoriteMovies.includes(movieId)) {
-            return res.status(400).send('Movie is already in favorites');
+        // Check if movie already exists in user's favorites
+        const alreadyExists = user.favoriteMovies.some(favMovie => favMovie.equals(movie._id));
+
+        if (alreadyExists) {
+            return res.status(400).json({ error: 'Movie already in favorites' });
         }
 
-        // Add the movie to favorites
-        user.favoriteMovies.push(movieId);
+        // Add the movie to user's favorites
+        user.favoriteMovies.push(movie._id);
         await user.save();
 
-        res.status(201).send('Movie added to favorites');
+        res.status(201).json({ message: 'Movie added to favorites', movie });
     } catch (error) {
         console.error('Error adding movie to favorites:', error);
-        res.status(500).send('Error adding movie to favorites');
+        res.status(500).json({ error: 'Failed to add movie to favorites' });
     }
 });
-
-// // DELETE: Remove movie from user's favorites
-// app.delete('/users/:userId/favorite/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     const { userId, movieId } = req.params;
-
-//     try {
-//         const user = await User.findById(userId);
-//         if (!user) {
-//             return res.status(404).send('User not found');
-//         }
-
-//         const movieIndex = user.favoriteMovies.indexOf(movieId);
-//         if (movieIndex === -1) {
-//             return res.status(400).send('Movie is not in favorites');
-//         }
-
-//         user.favoriteMovies.splice(movieIndex, 1);
-//         await user.save();
-
-//         res.status(200).send('Movie removed from favorites');
-//     } catch (error) {
-//         console.error('Error removing movie from favorites:', error);
-//         res.status(500).send('Error removing movie from favorites');
-//     }
-// });
-
-
-
-
-
-
-// Fetch users favorite movies 
-app.get('/users/:userId/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { userId } = req.params;
-
-    try {
-        const user = await User.findById(userId).populate('favoriteMovies');
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-
-        res.status(200).json(user.favoriteMovies);
-    } catch (error) {
-        console.error('Error fetching user favorites:', error);
-        res.status(500).send('Error fetching user favorites');
-    }
-});
-
-
-
-
-
-
-
-
-app.delete('/users/:userId/favorite/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { userId, movieId } = req.params;
-
-    try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-
-        const movieIndex = user.favoriteMovies.indexOf(movieId);
-        if (movieIndex === -1) {
-            return res.status(400).send('Movie is not in favorites');
-        }
-
-        user.favoriteMovies.splice(movieIndex, 1);
-        await user.save();
-
-        res.status(200).send('Movie removed from favorites');
-    } catch (error) {
-        console.error('Error removing movie from favorites:', error);
-        res.status(500).send('Error removing movie from favorites');
-    }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
