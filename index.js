@@ -235,16 +235,90 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // POST endpoint to add a movie to a user's favorites
-app.post('/users/:username/favoriteMovies/:movieId', async (req, res) => {
+app.post('/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { username, movieId } = req.params;
 
     try {
-        // Fetch user from database by username
-        const user = await User.findOne({ username });
+        const user = req.user;
 
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+        // Ensure the current user matches the requested username
+        if (user.username !== username) {
+            return res.status(403).json({ error: 'Unauthorized' });
         }
 
         // Fetch movie from database by movieId
@@ -271,6 +345,62 @@ app.post('/users/:username/favoriteMovies/:movieId', async (req, res) => {
         res.status(500).json({ error: 'Failed to add movie to favorites' });
     }
 });
+
+// GET endpoint to retrieve a user's favorite movies
+app.get('/:username/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { username } = req.params;
+
+    try {
+        const user = req.user;
+
+        // Ensure the current user matches the requested username
+        if (user.username !== username) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        // Find the user by username and populate the favorites array
+        await user.populate('favorites').execPopulate();
+
+        res.json(user.favorites);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching favorites', error: err });
+    }
+});
+
+// DELETE endpoint to remove a movie from a user's favorites
+app.delete('/:username/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { username, movieId } = req.params;
+
+    try {
+        const user = req.user;
+
+        // Ensure the current user matches the requested username
+        if (user.username !== username) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        // Find the user by username and remove movieId from favorites
+        const updatedUser = await User.findOneAndUpdate(
+            { username: username },
+            { $pull: { favorites: movieId } },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(updatedUser);
+    } catch (err) {
+        res.status(500).json({ message: 'Error removing from favorites', error: err });
+    }
+});
+
+
+
+
+
+
 
 
 
