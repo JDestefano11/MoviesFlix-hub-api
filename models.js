@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    favoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }],
+    favoriteMovies: [{ type: String }]
 });
 
 const movieSchema = new mongoose.Schema({
