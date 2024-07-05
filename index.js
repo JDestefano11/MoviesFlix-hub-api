@@ -278,7 +278,7 @@ app.delete('/users/:username/favorites/movies/:title', passport.authenticate('jw
     const { username, title } = req.params;
 
     try {
-        const user = await User.findById(username);
+        const user = await User.findBy(username);
         if (!user) {
             return res.status(404).send('User not found');
         }
