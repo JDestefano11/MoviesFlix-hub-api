@@ -251,12 +251,12 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 
 // POST: Add movie to user's favorites
-app.post('/users/:username/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/users/:username/favoriteMovies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { username } = req.params;
     const { movieId } = req.body;
 
     try {
-        const user = await User.findById(username);
+        const user = await User.findOne(username);
         if (!user) {
             return res.status(404).send('User not found');
         }
