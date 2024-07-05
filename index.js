@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -251,12 +244,12 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 
 // POST: Add movie to user's favorites
-app.post('/users/:username/favoriteMovies', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { username } = req.params;
+app.post('/users/:userId/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { userId } = req.params;
     const { movieId } = req.body;
 
     try {
-        const user = await User.findOne(username);
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).send('User not found');
         }
@@ -276,11 +269,11 @@ app.post('/users/:username/favoriteMovies', passport.authenticate('jwt', { sessi
 });
 
 // DELETE: Remove movie from user's favorites
-app.delete('/users/:username/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.delete('/users/:userId/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { userId, movieId } = req.params;
 
     try {
-        const user = await User.findById(username);
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).send('User not found');
         }
