@@ -244,9 +244,9 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 
 
 // POST: Add movie to user's favorites
-app.post('/users/:username/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { username } = req.params;
-    const { movieId } = req.body;
+app.post('/users/:username/favorites/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { username, title } = req.params;
+
 
     try {
         const user = await User.findById(username);
@@ -254,11 +254,16 @@ app.post('/users/:username/favorites', passport.authenticate('jwt', { session: f
             return res.status(404).send('User not found');
         }
 
-        if (user.favoriteMovies.includes(movieId)) {
+        const movie = await Movie.findOne({ Title: title });
+        if (!movie) {
+            return res.status(404).send('Movie not found');
+        }
+
+        if (user.favoriteMovies.includes(title)) {
             return res.status(400).send('Movie already in favorites');
         }
 
-        user.favoriteMovies.push(movieId);
+        user.favoriteMovies.push(title);
         await user.save();
 
         res.status(200).send('Movie added to favorites');
@@ -269,8 +274,8 @@ app.post('/users/:username/favorites', passport.authenticate('jwt', { session: f
 });
 
 // DELETE: Remove movie from user's favorites
-app.delete('/users/:username/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { userId, movieId } = req.params;
+app.delete('/users/:username/favorites/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { username, title } = req.params;
 
     try {
         const user = await User.findById(username);
@@ -278,7 +283,8 @@ app.delete('/users/:username/favorites/:movieId', passport.authenticate('jwt', {
             return res.status(404).send('User not found');
         }
 
-        const movieIndex = user.favoriteMovies.indexOf(movieId);
+
+        const movieIndex = user.favoriteMovies.indexOf(title);
         if (movieIndex === -1) {
             return res.status(400).send('Movie is not in favorites');
         }
