@@ -294,9 +294,9 @@ app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async
 // });
 
 //Add Favorite
-app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/users/:username/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await User.findOneAndUpdate({ username: req.params.username }, {
-        $push: { favoritemovies: req.params.MovieID }
+        $push: { favoritemovies: req.params.title }
     },
         { new: true })
         .then((updatedUser) => {
@@ -310,12 +310,12 @@ app.post('/users/:username/movies/:MovieID', passport.authenticate('jwt', { sess
 
 
 //Remove Favorite
-app.delete('/users/:username/movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.delete('/users/:username/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
 
     let user = await User.findOne({ username: req.params.username })
 
     if (user) {
-        user.favoriteMovies = user.favorite_movies.filter((movie) => { return movie.title !== req.params.MovieID });
+        user.favoriteMovies = user.favoritemovies.filter((movie) => { return movie.title !== req.params.title });
         res.status(201).send('user ' + req.params.username + ' has removed a movie from favorite list');
     } else {
         res.status(404).send('Movie couldnt be removed from the favorite list');
