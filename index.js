@@ -315,7 +315,7 @@ app.delete('/users/:username/movies/:MovieID', passport.authenticate('jwt', { se
     let user = await User.findOne({ username: req.params.username })
 
     if (user) {
-        user.favorite_movies = user.favorite_movies.filter((movie) => { return movie.title !== req.params.MovieID });
+        user.favoriteMovies = user.favorite_movies.filter((movie) => { return movie.title !== req.params.MovieID });
         res.status(201).send('user ' + req.params.username + ' has removed a movie from favorite list');
     } else {
         res.status(404).send('Movie couldnt be removed from the favorite list');
