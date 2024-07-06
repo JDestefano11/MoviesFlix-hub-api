@@ -247,44 +247,8 @@ app.delete('/users/:username', passport.authenticate('jwt', { session: false }),
 //     }
 // });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.post('/users/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    console.log('Received request to add movie to favorites'); // Add this line
+    console.log('Received request to add movie to favorites');
     await User.findOneAndUpdate(
         { username: req.params.username },
         {
@@ -294,16 +258,15 @@ app.post('/users/:username/movies/:movieId', passport.authenticate('jwt', { sess
     )
         .then((updatedUser) => {
             res.json(updatedUser);
-        })
-        .catch((err) => {
-            console.error(err);
-            res.status(500).json({
-                error: "Internal Server Error",
-                message: "Failed to add the specified movie"
+        })8
+            .catch((err) => {
+                console.error(err);
+                res.status(500).json({
+                    error: "Internal Server Error",
+                    message: "Failed to add the specified movie"
+                });
             });
-        });
 });
-
 
 // app.post('/users/:userId/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
 //     const { userId } = req.params;
