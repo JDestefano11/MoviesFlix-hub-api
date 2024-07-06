@@ -258,14 +258,14 @@ app.post('/users/:username/movies/:movieId', passport.authenticate('jwt', { sess
     )
         .then((updatedUser) => {
             res.json(updatedUser);
-        })8
-            .catch((err) => {
-                console.error(err);
-                res.status(500).json({
-                    error: "Internal Server Error",
-                    message: "Failed to add the specified movie"
-                });
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).json({
+                error: "Internal Server Error",
+                message: "Failed to add the specified movie"
             });
+        });
 });
 
 // app.post('/users/:userId/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
