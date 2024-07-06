@@ -169,37 +169,17 @@ app.post('/users', async (req, res) => {
         res.status(500).json({ error: 'Error registering user' });
     }
 });
-
-
-// PUT: Update user's username
-app.put('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { username } = req.params;
-    const { newUsername } = req.body;
-
-    try {
-        const userToUpdate = await Users.findOneAndUpdate(
-            { username },
-            { username: newUsername },
-            { new: true }
-        );
-
-        if (!userToUpdate) {
-            return res.status(404).send('User does not exist');
-        }
-
-        res.status(200).json(userToUpdate);
-    } catch (error) {
-        console.error('Error updating username:', error);
-        res.status(500).send('Error updating username');
-    }
-});
-
-// app.put('/users/:userId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     const { userId } = req.params;
-//     const { Username } = req.body;
+// // PUT: Update user's username
+// app.put('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
+//     const { username } = req.params;
+//     const { newUsername } = req.body;
 
 //     try {
-//         const userToUpdate = await User.findByIdAndUpdate(userId, { Username }, { new: true });
+//         const userToUpdate = await Users.findOneAndUpdate(
+//             { username },
+//             { username: newUsername },
+//             { new: true }
+//         );
 
 //         if (!userToUpdate) {
 //             return res.status(404).send('User does not exist');
@@ -211,6 +191,70 @@ app.put('/users/:username', passport.authenticate('jwt', { session: false }), as
 //         res.status(500).send('Error updating username');
 //     }
 // });
+
+app.put("/users/:username",
+    passport.authenticate("jwt", { session: false }),
+    [
+        check("Username", "Username is required").isLength({ min: 5 }),
+        check(
+            "Username",
+            "Username contains non alphanumeric characters - not allowed."
+        ).isAlphanumeric(),
+        check("Password", "Password is required").not().isEmpty(),
+    ],
+    (req, res) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+
+        const hashedPassword = User.hashPassword(req.body.password);
+        User.findOneAndUpdate(
+            { username: req.params.username },
+            {
+                $set: {
+                    username: req.body.username,
+                    password: hashedPassword,
+                    email: req.body.email,
+                    birthday: req.body.birthday,
+                },
+            },
+            { new: true }
+        )
+            .then((updatedUser) => {
+                if (!updatedUser) {
+                    return res.status(404).json({ error: "User was not found" });
+                }
+                res.json({ user: updatedUser });
+            })
+            .catch((err) => {
+                console.error(err);
+                res.status(500).json({
+                    error: "Internal server error",
+                    message: "Failed to update user information",
+                });
+            });
+    }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.delete("/users/:username",
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
@@ -235,25 +279,6 @@ app.delete("/users/:username",
                 });
             });
     });
-
-
-
-// // DELETE: Delete user account
-// app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     const { id } = req.params;
-
-//     try {
-//         const deletedUser = await User.findByIdAndDelete(id);
-//         if (!deletedUser) {
-//             return res.status(404).send('User does not exist');
-//         }
-
-//         res.status(200).json({ message: 'User successfully deleted' });
-//     } catch (error) {
-//         console.error('Error deleting user:', error);
-//         res.status(500).send('Error deleting user');
-//     }
-// });
 
 app.post('/users/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     console.log('Received request to add movie to favorites');
