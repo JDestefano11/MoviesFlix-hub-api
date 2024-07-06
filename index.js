@@ -214,12 +214,18 @@ app.put('/users/:username', passport.authenticate('jwt', { session: false }), as
 app.delete("/users/:username",
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
-        User.findOneAndRemove({ username: req.params.username })
+        const username = req.params.username;
+
+        if (!username) {
+            return res.status(400).json({ error: "Username parameter is missing or invalid" });
+        }
+
+        User.findOneAndDelete({ username })
             .then((user) => {
                 if (!user) {
-                    return res.status(404).json({ error: `User ${req.params.username} was not found` });
+                    return res.status(404).json({ error: `User ${username} was not found` });
                 }
-                res.json({ message: `${req.params.username} was deleted.` });
+                res.json({ message: `${username} was deleted.` });
             })
             .catch((err) => {
                 console.error('Error deleting user:', err);
@@ -229,7 +235,6 @@ app.delete("/users/:username",
                 });
             });
     });
-
 
 
 
