@@ -283,10 +283,9 @@ app.delete('/users/:username', passport.authenticate('jwt', { session: false }),
 
 
 
-
-// POST: Add movie to user's favorites
 app.post('/users/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await Users.findOneAndUpdate(
+    console.log('Received request to add movie to favorites'); // Add this line
+    await User.findOneAndUpdate(
         { username: req.params.username },
         {
             $push: { favoriteMovies: req.params.movieId }
