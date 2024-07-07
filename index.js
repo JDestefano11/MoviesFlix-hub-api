@@ -192,56 +192,42 @@ app.post('/users', async (req, res) => {
 //     }
 // });
 
-// PUT: Update user information
-app.put("/users/:username",
-    passport.authenticate("jwt", { session: false }),
+// PUT: Update username
+app.put('/users/:username/update-username',
+    passport.authenticate('jwt', { session: false }),
     [
-        check("username", "Username is required").isLength({ min: 5 }),
-        check("username", "Username contains non alphanumeric characters - not allowed.").isAlphanumeric(),
-        check("password", "Password is required").not().isEmpty(),
-        check("email", "Email is required").isEmail(),
-        check("birthday", "Birthday is required").isISO8601()
+        check('newUsername', 'New username is required').isLength({ min: 5 }),
+        check('newUsername', 'New username contains non-alphanumeric characters - not allowed.').isAlphanumeric()
     ],
     (req, res) => {
         const errors = validationResult(req);
-
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
         }
 
-        const { username, password, email, birthday } = req.body;
-        const hashedPassword = User.hashPassword(password);
-
-        console.log('Received data:', { username, password, email, birthday });
+        const { newUsername } = req.body;
 
         User.findOneAndUpdate(
             { username: req.params.username },
-            {
-                $set: {
-                    username,
-                    password: hashedPassword,
-                    email,
-                    birthday,
-                },
-            },
+            { $set: { username: newUsername } },
             { new: true }
         )
             .then((updatedUser) => {
                 if (!updatedUser) {
-                    console.error('User not found:', req.params.username);
                     return res.status(404).json({ error: "User was not found" });
                 }
                 res.json({ user: updatedUser });
             })
             .catch((err) => {
-                console.error('Error updating user:', err);
+                console.error('Error updating username:', err);
                 res.status(500).json({
                     error: "Internal server error",
-                    message: "Failed to update user information",
+                    message: "Failed to update username"
                 });
             });
     }
 );
+
 
 
 
