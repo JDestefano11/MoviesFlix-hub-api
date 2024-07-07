@@ -24,6 +24,11 @@ const movieSchema = new mongoose.Schema({
     ImageUrl: { type: String },
 });
 
+
+userSchema.statics.hashPassword = function (password) {
+    return bcrypt.hashSync(password, 10);
+};
+
 const User = mongoose.model('User', userSchema);
 const Movie = mongoose.model('Movie', movieSchema);
 
