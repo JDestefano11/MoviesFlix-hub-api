@@ -169,29 +169,6 @@ app.post('/users', async (req, res) => {
         res.status(500).json({ error: 'Error registering user' });
     }
 });
-// // PUT: Update user's username
-// app.put('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     const { username } = req.params;
-//     const { newUsername } = req.body;
-
-//     try {
-//         const userToUpdate = await Users.findOneAndUpdate(
-//             { username },
-//             { username: newUsername },
-//             { new: true }
-//         );
-
-//         if (!userToUpdate) {
-//             return res.status(404).send('User does not exist');
-//         }
-
-//         res.status(200).json(userToUpdate);
-//     } catch (error) {
-//         console.error('Error updating username:', error);
-//         res.status(500).send('Error updating username');
-//     }
-// });
-
 // PUT: Update username
 app.put('/users/:username/update-username',
     passport.authenticate('jwt', { session: false }),
