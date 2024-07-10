@@ -75,7 +75,7 @@ app.post('/login', async (req, res) => {
         return res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         console.error('Error during authentication:', error);
-        return res.status(500).json('Internal server error');
+        return res.status(500).send('Internal server error');
     }
 });
 
