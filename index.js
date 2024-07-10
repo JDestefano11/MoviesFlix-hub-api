@@ -9,6 +9,8 @@ const { Movie, User } = require('./models');
 const { check, validationResult } = require('express-validator');
 
 const app = express();
+app.use(express.json());
+
 const port = process.env.PORT || 8080;
 
 // Load environment variables
@@ -73,7 +75,7 @@ app.post('/login', async (req, res) => {
         return res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         console.error('Error during authentication:', error);
-        return res.status(500).send('Internal server error');
+        return res.status(500).json('Internal server error');
     }
 });
 
