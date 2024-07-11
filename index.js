@@ -63,16 +63,20 @@ app.get('/', (req, res) => {
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-
     try {
+        // Find user by username
         const user = await User.findOne({ username });
 
+        // Check if user exists and password is correct
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ message: 'Authentication failed' });
         }
 
+        // Generate JWT token
         const token = generateJWTToken(user.toJSON());
-        return res.status(200).json({ message: 'Login successful', token });
+
+        // Return user and token upon successful login
+        return res.status(200).json({ user, token });
     } catch (error) {
         console.error('Error during authentication:', error);
         return res.status(500).send('Internal server error');
@@ -207,23 +211,7 @@ app.put('/users/:username/update-username',
     }
 );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Deletes a user account
 app.delete("/users/:username",
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
