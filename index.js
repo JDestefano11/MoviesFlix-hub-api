@@ -237,50 +237,79 @@ app.delete("/users/:username",
             });
     });
 
-app.post('/users/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    console.log('Received request to add movie to favorites');
-    await User.findOneAndUpdate(
-        { username: req.params.username },
-        {
-            $push: { favoriteMovies: req.params.movieId }
-        },
-        { new: true }
-    )
-        .then((updatedUser) => {
-            res.json(updatedUser);
-        })
-        .catch((err) => {
-            console.error(err);
-            res.status(500).json({
-                error: "Internal Server Error",
-                message: "Failed to add the specified movie"
-            });
-        });
+// Add favorite movie to movies list
+app.post('/users/username:favorites/movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { username, movieId } = req.params;
+    try {
+        const user = await User.findOneAndUpdate(
+            { username },
+            { $addtoset: { favoriteMovies: movieId } },
+            { new: true }
+        ).populate('favoriteMovies');
+        res.status(200).json(user)
+    } catch (error) {
+        res.status(500).json({ message: ' Error adding movie to favorites', error });
+    }
 });
 
-// DELETE: Remove movie from user's favorites
-app.delete('/users/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await User.findOneAndUpdate(
-        { username: req.params.username },
-        {
-            $pull: { favoriteMovies: req.params.movieId }
-        },
-        { new: true }
-    )
-        .then((updatedUser) => {
-            if (!updatedUser) {
-                return res.status(404).send('User not found');
-            }
-            res.json(updatedUser);
-        })
-        .catch((err) => {
-            console.error('Error removing movie from favorites:', err);
-            res.status(500).json({
-                error: "Internal Server Error",
-                message: "Failed to remove the specified movie"
-            });
-        });
-});
+
+
+
+
+
+
+
+
+
+
+
+
+
+// add movie to favorites list
+// app.post('/users/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+//     console.log('Received request to add movie to favorites');
+//     await User.findOneAndUpdate(
+//         { username: req.params.username },
+//         {
+//             $push: { favoriteMovies: req.params.movieId }
+//         },
+//         { new: true }
+//     )
+//         .then((updatedUser) => {
+//             res.json(updatedUser);
+//         })
+//         .catch((err) => {
+//             console.error(err);
+//             res.status(500).json({
+//                 error: "Internal Server Error",
+//                 message: "Failed to add the specified movie"
+//             });
+//         });
+// });
+
+// // DELETE: Remove movie from user's favorites
+// app.delete('/users/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+//     await User.findOneAndUpdate(
+//         { username: req.params.username },
+//         {
+//             $pull: { favoriteMovies: req.params.movieId }
+//         },
+//         { new: true }
+//     )
+//         .then((updatedUser) => {
+//             if (!updatedUser) {
+//                 return res.status(404).send('User not found');
+//             }
+//             res.json(updatedUser);
+//         })
+//         .catch((err) => {
+//             console.error('Error removing movie from favorites:', err);
+//             res.status(500).json({
+//                 error: "Internal Server Error",
+//                 message: "Failed to remove the specified movie"
+//             });
+//         });
+// });
 
 // Start server
 app.listen(port, () => {
