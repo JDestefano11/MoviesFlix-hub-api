@@ -253,7 +253,20 @@ app.post('/users/username:favorites/movieId', passport.authenticate('jwt', { ses
 });
 
 
-
+// Delete movie from favorites list
+app.delete('users/:username/favorites/movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { username, movieId } = req.params;
+    try {
+        const user = await User.findOneAndUpdate(
+            { username },
+            { $pull: { favoriteMovies: movieId } },
+            { new: true }
+        ).populate('favoriteMovies');
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: ' Error removing movie from favorites' });
+    }
+});
 
 
 
