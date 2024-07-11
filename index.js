@@ -238,23 +238,22 @@ app.delete("/users/:username",
     });
 
 // Add favorite movie to movies list
-app.post('/users/username:favorites/movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/users/:username/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { username, movieId } = req.params;
     try {
         const user = await User.findOneAndUpdate(
             { username },
-            { $addtoset: { favoriteMovies: movieId } },
+            { $addToSet: { favoriteMovies: movieId } },
             { new: true }
         ).populate('favoriteMovies');
-        res.status(200).json(user)
+        res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ message: ' Error adding movie to favorites', error });
+        res.status(500).json({ message: 'Error adding movie to favorites', error });
     }
 });
 
-
 // Delete movie from favorites list
-app.delete('users/:username/favorites/movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.delete('/users/:username/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { username, movieId } = req.params;
     try {
         const user = await User.findOneAndUpdate(
@@ -264,7 +263,7 @@ app.delete('users/:username/favorites/movieId', passport.authenticate('jwt', { s
         ).populate('favoriteMovies');
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ message: ' Error removing movie from favorites' });
+        res.status(500).json({ message: 'Error removing movie from favorites', error });
     }
 });
 
