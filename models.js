@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema({
 const movieSchema = new mongoose.Schema({
     Title: { type: String, required: true },
     Description: { type: String, required: true },
+    Year: Number,
+    Rating: { type: Number, default: 0 },
     Genre: {
         Name: { type: String, required: true },
         Description: { type: String }
