@@ -12,7 +12,7 @@ const movieSchema = new mongoose.Schema({
     Title: { type: String, required: true },
     Description: { type: String, required: true },
     Year: Number,
-    Rating: { type: Number, default: 0 },
+    Rating: Number,
     Genre: {
         Name: { type: String, required: true },
         Description: { type: String }
