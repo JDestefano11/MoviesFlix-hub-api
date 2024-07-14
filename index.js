@@ -269,7 +269,7 @@ app.delete('/users/:username/favorites/:movieId', passport.authenticate('jwt', {
 
 // Endpoint for getting movie of the day
 app.get('/movie-of-the-day', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Movies.find()
+    Movie.find()
         .then(movies => {
             if (movies.length > 0) {
                 const randomIndex = Math.floor(Math.random() * movies.length);
