@@ -267,6 +267,23 @@ app.delete('/users/:username/favorites/:movieId', passport.authenticate('jwt', {
     }
 });
 
+// Endpoint for getting movie of the day
+app.get('/movie-of-the-day', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Movies.find()
+        .then(movies => {
+            if (movies.length > 0) {
+                const randomIndex = Math.floor(Math.random() * movies.length);
+                const movieOfTheDay = movies[randomIndex];
+                res.json(movieOfTheDay);
+            } else {
+                res.status(404).send('No movies found');
+            }
+        })
+        .catch(err => {
+            console.error('Error getting movie of the day:', err);
+            res.status(500).send('Something went wrong');
+        });
+});
 
 
 
@@ -274,54 +291,6 @@ app.delete('/users/:username/favorites/:movieId', passport.authenticate('jwt', {
 
 
 
-
-
-
-// add movie to favorites list
-// app.post('/users/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     console.log('Received request to add movie to favorites');
-//     await User.findOneAndUpdate(
-//         { username: req.params.username },
-//         {
-//             $push: { favoriteMovies: req.params.movieId }
-//         },
-//         { new: true }
-//     )
-//         .then((updatedUser) => {
-//             res.json(updatedUser);
-//         })
-//         .catch((err) => {
-//             console.error(err);
-//             res.status(500).json({
-//                 error: "Internal Server Error",
-//                 message: "Failed to add the specified movie"
-//             });
-//         });
-// });
-
-// // DELETE: Remove movie from user's favorites
-// app.delete('/users/:username/movies/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     await User.findOneAndUpdate(
-//         { username: req.params.username },
-//         {
-//             $pull: { favoriteMovies: req.params.movieId }
-//         },
-//         { new: true }
-//     )
-//         .then((updatedUser) => {
-//             if (!updatedUser) {
-//                 return res.status(404).send('User not found');
-//             }
-//             res.json(updatedUser);
-//         })
-//         .catch((err) => {
-//             console.error('Error removing movie from favorites:', err);
-//             res.status(500).json({
-//                 error: "Internal Server Error",
-//                 message: "Failed to remove the specified movie"
-//             });
-//         });
-// });
 
 // Start server
 app.listen(port, () => {
