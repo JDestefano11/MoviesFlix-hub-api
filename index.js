@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(passport.initialize());
 
-const allowedOrigins = ['http://localhost:1234', 'https://moviesflix-hub-fca46ebf9888.herokuapp.com', 'https://66972f77ca8d4c29f74d89fe--moviesflix-hub.netlify.app/'];
+const allowedOrigins = ['http://localhost:1234', 'https://moviesflix-hub.netlify.app/'];
 
 app.use(cors({
     origin: function (origin, callback) {
