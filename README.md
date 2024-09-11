@@ -35,19 +35,24 @@ PORT=your_port (default is 8080)
 3. npm start
 
 ## API Endpoints
-Movies
-GET /movies - Get a list of all movies
-GET /movies/:title - Get data about a single movie by title
-Genres
-GET /genres/:name - Get data about a genre by name
-Directors
-GET /directors/:name - Get data about a director by name
-Users
-POST /users - Register a new user
-PUT /users/:username/update-username - Update a user's username
-DELETE /users/:username - Delete a user account
-POST /users/:username/favorites/:movieId - Add a movie to a user's list of favorites
-DELETE /users/:username/favorites/:movieId - Remove a movie from a user's list of favorites
+## API Endpoints
+
+- **Movies**  
+  - `GET /movies` - Get a list of all movies  
+  - `GET /movies/:title` - Get data about a single movie by title  
+
+- **Genres**  
+  - `GET /genres/:name` - Get data about a genre by name  
+
+- **Directors**  
+  - `GET /directors/:name` - Get data about a director by name  
+
+- **Users**  
+  - `POST /users` - Register a new user  
+  - `PUT /users/:username/update-username` - Update a user's username  
+  - `DELETE /users/:username` - Delete a user account  
+  - `POST /users/:username/favorites/:movieId` - Add a movie to a user's list of favorites  
+  - `DELETE /users/:username/favorites/:movieId` - Remove a movie from a user's list of favorites  
 
 ## Authentication
 The API uses JWT (JSON Web Token) for authentication. To access protected routes, include the JWT token in the Authorization header as a Bearer token.
