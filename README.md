@@ -34,7 +34,7 @@ JWT_SECRET=your_jwt_secret
 PORT=your_port (default is 8080)
 3. npm start
 
-##API Endpoints
+## API Endpoints
 Movies
 GET /movies - Get a list of all movies
 GET /movies/:title - Get data about a single movie by title
@@ -49,10 +49,10 @@ DELETE /users/:username - Delete a user account
 POST /users/:username/favorites/:movieId - Add a movie to a user's list of favorites
 DELETE /users/:username/favorites/:movieId - Remove a movie from a user's list of favorites
 
-##Authentication
+## Authentication
 The API uses JWT (JSON Web Token) for authentication. To access protected routes, include the JWT token in the Authorization header as a Bearer token.
 
 
-##Documentation
+## Documentation
 The API documentation is generated using JSDoc. To generate the documentation, run: npx jsdoc -c jsdoc.json
 
