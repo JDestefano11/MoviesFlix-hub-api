@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Main server file for the MoviesFlix API.
+ */
+
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -59,28 +63,40 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Define a route handler for the root endpoint
+/**
+ * @description Root endpoint.
+ * @name /
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
-// Login endpoint
+/**
+ * @description Login endpoint.
+ * @name /login
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        // Find user by username
         const user = await User.findOne({ username });
 
-        // Check if user exists and password is correct
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ message: 'Authentication failed' });
         }
 
-        // Generate JWT token
         const token = generateJWTToken(user.toJSON());
 
-        // Return user and token upon successful login
         return res.status(200).json({ user, token });
     } catch (error) {
         console.error('Error during authentication:', error);
@@ -88,11 +104,28 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Logout endpoint
+/**
+ * @description Logout endpoint.
+ * @name /logout
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.post('/logout', (req, res) => {
     res.status(200).json({ message: 'Logout successful' });
 });
 
+/**
+ * @description Get all movies.
+ * @name /movies
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
         console.log('Authenticated user:', req.user);
@@ -111,8 +144,15 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
     }
 });
 
-
-// GET: Read a movie by title
+/**
+ * @description Get a movie by title.
+ * @name /movies/:title
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.get('/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const title = req.params.title;
     try {
@@ -127,7 +167,15 @@ app.get('/movies/:title', passport.authenticate('jwt', { session: false }), asyn
     }
 });
 
-// GET: Read genre by name
+/**
+ * @description Get a genre by name.
+ * @name /genres/:name
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.get('/genres/:name', passport.authenticate('jwt', { session: false }), (req, res) => {
     const name = req.params.name;
     Movie.findOne({ 'Genre.Name': name })
@@ -144,7 +192,15 @@ app.get('/genres/:name', passport.authenticate('jwt', { session: false }), (req,
         });
 });
 
-// GET: Read director by name
+/**
+ * @description Get a director by name.
+ * @name /directors/:name
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.get('/directors/:name', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const name = req.params.name;
     try {
@@ -159,7 +215,15 @@ app.get('/directors/:name', passport.authenticate('jwt', { session: false }), as
     }
 });
 
-// POST: Register new users
+/**
+ * @description Register a new user.
+ * @name /users
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.post('/users', async (req, res) => {
     try {
         const { username, password, email, birthday } = req.body;
@@ -180,7 +244,16 @@ app.post('/users', async (req, res) => {
         res.status(500).json({ error: 'Error registering user' });
     }
 });
-// PUT: Update username
+
+/**
+ * @description Update a user's username.
+ * @name /users/:username/update-username
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.put('/users/:username/update-username',
     passport.authenticate('jwt', { session: false }),
     [
@@ -216,7 +289,15 @@ app.put('/users/:username/update-username',
     }
 );
 
-// Deletes a user account
+/**
+ * @description Delete a user account.
+ * @name /users/:username
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.delete("/users/:username",
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
@@ -242,7 +323,15 @@ app.delete("/users/:username",
             });
     });
 
-// Add favorite movie to movies list
+/**
+ * @description Add a movie to a user's list of favorites.
+ * @name /users/:username/favorites/:movieId
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.post('/users/:username/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { username, movieId } = req.params;
     try {
@@ -257,7 +346,15 @@ app.post('/users/:username/favorites/:movieId', passport.authenticate('jwt', { s
     }
 });
 
-// Delete movie from favorites list
+/**
+ * @description Remove a movie from a user's list of favorites.
+ * @name /users/:username/favorites/:movieId
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.delete('/users/:username/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { username, movieId } = req.params;
     try {
@@ -272,7 +369,15 @@ app.delete('/users/:username/favorites/:movieId', passport.authenticate('jwt', {
     }
 });
 
-// Endpoint for getting movie of the day
+/**
+ * @description Get the movie of the day.
+ * @name /movie-of-the-day
+ * @function
+ * @memberof module:routes
+ * @inner
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 app.get('/movie-of-the-day', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movie.find()
         .then(movies => {
@@ -289,13 +394,6 @@ app.get('/movie-of-the-day', passport.authenticate('jwt', { session: false }), (
             res.status(500).send('Something went wrong');
         });
 });
-
-
-
-
-
-
-
 
 // Start server
 app.listen(port, () => {
