@@ -46,7 +46,8 @@ const allowedOrigins = [
     'http://localhost:1234',
     'https://moviesflix-hub.netlify.app',
     'https://moviesflix-hub-fca46ebf9888.herokuapp.com',
-    'http://localhost:4200'
+    'http://localhost:4200',
+    'http://localhost:5173',
 ];
 
 app.use(cors({
